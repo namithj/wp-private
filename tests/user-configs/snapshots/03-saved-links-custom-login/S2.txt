@@ -1,0 +1,54 @@
+=== home, logged out ===
+<main class="wp-block-group is-layout-flow wp-block-group-is-layout-flow">
+<div class="wp-block-query is-layout-flow wp-block-query-is-layout-flow"><ul class="wp-block-post-template is-layout-flow wp-block-post-template-is-layout-flow"><li class="wp-block-post post-900001 post type-post status-publish format-standard hentry category-uncategorized">
+<h2 class="wp-block-post-title">Gated post</h2>
+<div class="wp-block-post-excerpt"><p class="wp-block-post-excerpt__excerpt">Open intro. </p></div>
+<div class="entry-content wp-block-post-content is-layout-flow wp-block-post-content-is-layout-flow">
+<p>Open intro.</p>
+<p class="wpp-note"><a class="wp-private-login" href="http://example.org/member-login/?redirect=http%3A%2F%2Fexample.org%2F">Log in</a> or <a class="wp-private-register" href="http://example.org/wp-login.php?action=register">Register</a> to read this content.</p>
+</div>
+</li><li class="wp-block-post post-900002 post type-post status-publish format-standard hentry category-uncategorized">
+<h2 class="wp-block-post-title">Plain post</h2>
+<div class="wp-block-post-excerpt"><p class="wp-block-post-excerpt__excerpt">Nothing gated here WPPOPEN-03. </p></div>
+<div class="entry-content wp-block-post-content is-layout-flow wp-block-post-content-is-layout-flow">
+<p>Nothing gated here WPPOPEN-03.</p>
+</div>
+</li></ul></div>
+</main>
+
+=== archive, logged out ===
+<main class="wp-block-group is-layout-flow wp-block-group-is-layout-flow">
+<div class="wp-block-query is-layout-flow wp-block-query-is-layout-flow"><ul class="wp-block-post-template is-layout-flow wp-block-post-template-is-layout-flow"><li class="wp-block-post post-900001 post type-post status-publish format-standard hentry category-uncategorized">
+<h2 class="wp-block-post-title">Gated post</h2>
+<div class="wp-block-post-excerpt"><p class="wp-block-post-excerpt__excerpt">Open intro. </p></div>
+<div class="entry-content wp-block-post-content is-layout-flow wp-block-post-content-is-layout-flow">
+<p>Open intro.</p>
+<p class="wpp-note"><a class="wp-private-login" href="http://example.org/member-login/?redirect=http%3A%2F%2Fexample.org%2F%3Fcat%3D1">Log in</a> or <a class="wp-private-register" href="http://example.org/wp-login.php?action=register">Register</a> to read this content.</p>
+</div>
+</li><li class="wp-block-post post-900002 post type-post status-publish format-standard hentry category-uncategorized">
+<h2 class="wp-block-post-title">Plain post</h2>
+<div class="wp-block-post-excerpt"><p class="wp-block-post-excerpt__excerpt">Nothing gated here WPPOPEN-03. </p></div>
+<div class="entry-content wp-block-post-content is-layout-flow wp-block-post-content-is-layout-flow">
+<p>Nothing gated here WPPOPEN-03.</p>
+</div>
+</li></ul></div>
+</main>
+
+=== date, logged out ===
+<main class="wp-block-group is-layout-flow wp-block-group-is-layout-flow">
+<div class="wp-block-query is-layout-flow wp-block-query-is-layout-flow"><ul class="wp-block-post-template is-layout-flow wp-block-post-template-is-layout-flow"><li class="wp-block-post post-900001 post type-post status-publish format-standard hentry category-uncategorized">
+<h2 class="wp-block-post-title">Gated post</h2>
+<div class="wp-block-post-excerpt"><p class="wp-block-post-excerpt__excerpt">Open intro. </p></div>
+<div class="entry-content wp-block-post-content is-layout-flow wp-block-post-content-is-layout-flow">
+<p>Open intro.</p>
+<p class="wpp-note"><a class="wp-private-login" href="http://example.org/member-login/?redirect=http%3A%2F%2Fexample.org%2F%3Fm%3D202611">Log in</a> or <a class="wp-private-register" href="http://example.org/wp-login.php?action=register">Register</a> to read this content.</p>
+</div>
+</li><li class="wp-block-post post-900002 post type-post status-publish format-standard hentry category-uncategorized">
+<h2 class="wp-block-post-title">Plain post</h2>
+<div class="wp-block-post-excerpt"><p class="wp-block-post-excerpt__excerpt">Nothing gated here WPPOPEN-03. </p></div>
+<div class="entry-content wp-block-post-content is-layout-flow wp-block-post-content-is-layout-flow">
+<p>Nothing gated here WPPOPEN-03.</p>
+</div>
+</li></ul></div>
+</main>
+

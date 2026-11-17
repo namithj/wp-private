@@ -1,0 +1,7 @@
+=== blocked user blocked ===
+<main>
+<h2>Gated post</h2><p>Open intro.</p>
+<b>You are not permitted &amp; that is final</b>
+<p>Open outro.</p>
+</main>
+

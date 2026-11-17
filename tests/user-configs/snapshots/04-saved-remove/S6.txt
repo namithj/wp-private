@@ -1,0 +1,5 @@
+=== search by a word inside the gate, logged out (known limitation until R05: the post is still found) ===
+front end finds the post: yes
+REST posts finds the post: yes
+REST search finds the post: yes
+

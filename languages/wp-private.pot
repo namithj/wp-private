@@ -1,0 +1,190 @@
+# Copyright (C) 2026 namithjawahar
+# This file is distributed under the GPLv2 or later.
+msgid ""
+msgstr ""
+"Project-Id-Version: WP Private – Gated Content for Posts & Pages 2.0.0\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/wp-private\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"POT-Creation-Date: 2026-11-17T14:06:20+05:30\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"X-Generator: WP-CLI 2.12.0\n"
+"X-Domain: wp-private\n"
+
+#. Plugin Name of the plugin
+#: wp-private.php
+msgid "WP Private – Gated Content for Posts & Pages"
+msgstr ""
+
+#. Plugin URI of the plugin
+#. Author URI of the plugin
+#: wp-private.php
+msgid "https://www.smartlogix.co.in/"
+msgstr ""
+
+#. Description of the plugin
+#: wp-private.php
+msgid "Privatize parts of posts from unauthorized users. Begin protected content with [protected] and end hidden content with [/protected]."
+msgstr ""
+
+#. Author of the plugin
+#: wp-private.php
+msgid "namithjawahar"
+msgstr ""
+
+#: includes/admin/class-settings-page.php:80
+#: includes/admin/class-settings-page.php:81
+msgid "WP Private"
+msgstr ""
+
+#: includes/admin/class-settings-page.php:90
+msgid "How to block content"
+msgstr ""
+
+#: includes/admin/class-settings-page.php:91
+msgid "Surround the text to hide from visitors with [protected] and [/protected] in a post or page."
+msgstr ""
+
+#: includes/admin/class-settings-page.php:97
+msgid "What visitors see instead"
+msgstr ""
+
+#: includes/admin/class-settings-page.php:103
+msgid "Replace blocked content with"
+msgstr ""
+
+#: includes/admin/class-settings-page.php:106
+msgid "A login form"
+msgstr ""
+
+#: includes/admin/class-settings-page.php:107
+msgid "Login and register links"
+msgstr ""
+
+#: includes/admin/class-settings-page.php:108
+msgid "Nothing (just remove it)"
+msgstr ""
+
+#: includes/admin/class-settings-page.php:114
+msgid "HTML before the prompt"
+msgstr ""
+
+#: includes/admin/class-settings-page.php:115
+msgid "Shown to logged-out visitors, before the login form or links."
+msgstr ""
+
+#: includes/admin/class-settings-page.php:122
+msgid "HTML after the prompt"
+msgstr ""
+
+#: includes/admin/class-settings-page.php:123
+msgid "Shown to logged-out visitors, after the login form or links."
+msgstr ""
+
+#: includes/admin/class-settings-page.php:132
+msgid "Logged-in users who cannot see protected content"
+msgstr ""
+
+#: includes/admin/class-settings-page.php:137
+msgid "Message for blocked users"
+msgstr ""
+
+#: includes/admin/class-settings-page.php:138
+msgid "Shown instead of the content to logged-in users on the block list."
+msgstr ""
+
+#: includes/admin/class-settings-page.php:145
+msgid "Block list"
+msgstr ""
+
+#: includes/admin/class-settings-page.php:152
+msgid "Custom login page"
+msgstr ""
+
+#: includes/admin/class-settings-page.php:153
+msgid "You can show a login form anywhere in your posts and pages with the shortcode [loginform]."
+msgstr ""
+
+#: includes/admin/class-settings-page.php:158
+msgid "Custom login page URL"
+msgstr ""
+
+#: includes/admin/class-settings-page.php:159
+msgid "The page where you have used the shortcode [loginform]. Leave empty to use the standard login page."
+msgstr ""
+
+#. translators: %d: number of users on the block list.
+#: includes/admin/class-users-field.php:94
+#, php-format
+msgid "%d user is on the block list."
+msgid_plural "%d users are on the block list."
+msgstr[0] ""
+msgstr[1] ""
+
+#: includes/admin/class-users-field.php:100
+#: includes/admin/class-users-field.php:102
+msgid "Search users"
+msgstr ""
+
+#: includes/admin/class-users-field.php:105
+msgid "Users who cannot see protected content"
+msgstr ""
+
+#: includes/admin/class-users-field.php:117
+msgid "No users found."
+msgstr ""
+
+#: includes/admin/class-users-field.php:140
+msgid "Changes made on this page are saved with the Save button; changes on other pages are lost when you switch pages without saving."
+msgstr ""
+
+#: includes/class-prompt.php:105
+msgid "Log in"
+msgstr ""
+
+#: includes/class-prompt.php:108
+msgid "Register"
+msgstr ""
+
+#. translators: 1: "Log in" link, 2: "Register" link.
+#: includes/class-prompt.php:111
+#, php-format
+msgid "%1$s or %2$s to read this content."
+msgstr ""
+
+#: includes/class-settings.php:139
+msgid "This content is for members. Please log in to read it."
+msgstr ""
+
+#: includes/class-settings.php:157
+msgid "You do not have permission to view this content."
+msgstr ""
+
+#. translators: 1: user name, 2: "Log out" link.
+#: includes/class-shortcodes.php:61
+#, php-format
+msgid "Hello, %1$s. %2$s"
+msgstr ""
+
+#: includes/class-shortcodes.php:63
+msgid "Log out"
+msgstr ""
+
+#. translators: 1: required PHP version, 2: current PHP version.
+#: wp-private.php:80
+#, php-format
+msgid "WP Private needs PHP %1$s or newer. You are running PHP %2$s, so the plugin is switched off."
+msgstr ""
+
+#. translators: 1: required WordPress version, 2: current WordPress version.
+#: wp-private.php:92
+#, php-format
+msgid "WP Private needs WordPress %1$s or newer. You are running WordPress %2$s, so the plugin is switched off."
+msgstr ""
+
+#: wp-private.php:103
+msgid "WP Private is missing its dependencies. Install the plugin from a release ZIP, or run \"composer install\" in the plugin folder."
+msgstr ""

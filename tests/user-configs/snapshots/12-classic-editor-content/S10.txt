@@ -1,0 +1,8 @@
+=== settings: load, save unchanged, reload ===
+wp_private_settings_type: stored -> unchanged
+wp_private_settings_before_html: stored -> unchanged
+wp_private_settings_after_html: stored -> unchanged
+wp_private_settings_authorized_text: stored -> unchanged
+wp_private_settings_blocked_users: stored -> unchanged
+wp_private_settings_custom_login_page_url: stored -> unchanged
+

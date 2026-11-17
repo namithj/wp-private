@@ -1,0 +1,5 @@
+=== head and excerpts, logged out ===
+head mentions of wp-private: 0
+excerpt: Between the gates. Open item
+embed excerpt: <p>Between the gates. Open item</p>
+

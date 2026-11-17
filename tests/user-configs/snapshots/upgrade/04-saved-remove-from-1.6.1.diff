@@ -1,0 +1,59 @@
+##### S1
+@@ @@
+ <main class="wp-block-group is-layout-flow wp-block-group-is-layout-flow"><h2 class="wp-block-post-title">Gated post</h2>
+ <div class="entry-content wp-block-post-content is-layout-flow wp-block-post-content-is-layout-flow">
+ <p>Open intro.</p>
+-<div class="wpp-removed">WPPWRAP-04-BEFOREWPPWRAP-04-AFTER</div>
+ </div></main>
+ 
+
+##### S2
+@@ @@
+ <div class="wp-block-post-excerpt"><p class="wp-block-post-excerpt__excerpt">Open intro. </p></div>
+ <div class="entry-content wp-block-post-content is-layout-flow wp-block-post-content-is-layout-flow">
+ <p>Open intro.</p>
+-<div class="wpp-removed">WPPWRAP-04-BEFOREWPPWRAP-04-AFTER</div>
+ </div>
+ </li><li class="wp-block-post post-900002 post type-post status-publish format-standard hentry category-uncategorized">
+ <h2 class="wp-block-post-title">Plain post</h2>
+@@ @@
+ <div class="wp-block-post-excerpt"><p class="wp-block-post-excerpt__excerpt">Open intro. </p></div>
+ <div class="entry-content wp-block-post-content is-layout-flow wp-block-post-content-is-layout-flow">
+ <p>Open intro.</p>
+-<div class="wpp-removed">WPPWRAP-04-BEFOREWPPWRAP-04-AFTER</div>
+ </div>
+ </li><li class="wp-block-post post-900002 post type-post status-publish format-standard hentry category-uncategorized">
+ <h2 class="wp-block-post-title">Plain post</h2>
+@@ @@
+ <div class="wp-block-post-excerpt"><p class="wp-block-post-excerpt__excerpt">Open intro. </p></div>
+ <div class="entry-content wp-block-post-content is-layout-flow wp-block-post-content-is-layout-flow">
+ <p>Open intro.</p>
+-<div class="wpp-removed">WPPWRAP-04-BEFOREWPPWRAP-04-AFTER</div>
+ </div>
+ </li><li class="wp-block-post post-900002 post type-post status-publish format-standard hentry category-uncategorized">
+ <h2 class="wp-block-post-title">Plain post</h2>
+
+##### S3
+@@ @@
+ stray output: none
+ --- content.rendered
+ <p>Open intro.</p>
+-<div class="wpp-removed">WPPWRAP-04-BEFOREWPPWRAP-04-AFTER</div>
+ --- excerpt.rendered
+ <p>Open intro.</p>
+ 
+
+##### S4
+@@ @@
+ --- item: Gated post
+ description: Open intro.
+ encoded: <p>Open intro.</p>
+-<div class="wpp-removed">WPPWRAP-04-BEFOREWPPWRAP-04-AFTER</div>
+ --- item: Plain post
+ description: Nothing gated here WPPOPEN-04.
+ encoded: <p>Nothing gated here WPPOPEN-04.</p>
+
+##### S5 identical
+##### S6 identical
+##### S7 identical
+##### S8 identical

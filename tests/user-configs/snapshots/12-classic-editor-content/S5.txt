@@ -1,0 +1,5 @@
+=== head and excerpts, logged out ===
+head mentions of wp-private: 0
+excerpt: First paragraph. Inline: before after. Last paragraph.
+embed excerpt: <p>First paragraph. Inline: before after. Last paragraph.</p>
+

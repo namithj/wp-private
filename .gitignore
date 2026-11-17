@@ -1,0 +1,14 @@
+# Files and folders related to build and test tools.
+.phpunit.result.cache
+/phpunit.xml
+.vscode/*
+/vendor/
+/vendor-prefixed/
+.cache/
+*.zip
+.DS_Store
+.ai
+
+# Track placeholders so that empty directories stay in the repo.
+!.gitkeep
+/dist/

@@ -1,0 +1,40 @@
+name: Version Sync
+
+# The version lives in three places: the plugin header, the WP_PRIVATE_VERSION
+# constant and the readme's Stable tag. This check fails when they disagree.
+# Nothing is written or committed here: bin/set-version.sh <version> does the
+# writing, by hand, before a release is tagged.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_call:
+    inputs:
+      tag:
+        description: 'Release tag (for example v2.0.0) that the files must carry'
+        required: false
+        default: ''
+        type: string
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    name: Versions agree
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Header, constant and Stable tag agree
+        run: bash bin/set-version.sh --check-current
+
+      - name: The files carry the tag's version
+        if: ${{ inputs.tag != '' }}
+        env:
+          TAG: ${{ inputs.tag }}
+        run: bash bin/set-version.sh --check "${TAG#v}"

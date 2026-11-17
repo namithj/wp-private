@@ -1,0 +1,8 @@
+=== per-field options after the first request on the new build ===
+wp_private_settings_type: form
+wp_private_settings_before_html: <div class="wpp-box"><b>Members only</b>
+wp_private_settings_after_html: </div>
+wp_private_settings_authorized_text: <b>Blocked on this site.</b>
+wp_private_settings_blocked_users: a:1:{i:0;s:6:"800003";}
+wp_private_settings_custom_login_page_url:
+

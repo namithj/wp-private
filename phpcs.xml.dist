@@ -1,0 +1,70 @@
+<?xml version="1.0"?>
+<ruleset name="WP Private WordPress Coding Standards">
+	<description>Apply WordPress Coding Standards to first-party plugin PHP.</description>
+	<arg name="extensions" value="php"/>
+	<arg name="cache" value=".cache/phpcs.cache"/>
+	<arg name="basepath" value="./"/>
+	<arg name="parallel" value="20"/>
+	<arg value="ps"/>
+	<ini name="memory_limit" value="1024M"/>
+	<!-- Our own code is PHP 7.4 syntax and the plugin header declares PHP 7.4 too. -->
+	<config name="testVersion" value="7.4-"/>
+	<file>.</file>
+	<exclude-pattern>/vendor/*</exclude-pattern>
+	<exclude-pattern>/vendor-prefixed/*</exclude-pattern>
+	<exclude-pattern>/.cache/*</exclude-pattern>
+	<exclude-pattern>/.ai/*</exclude-pattern>
+	<!-- Extracted copies of the released 1.x plugins, kept only as test fixtures. -->
+	<exclude-pattern>/tests/fixtures/*</exclude-pattern>
+
+	<rule ref="WordPress-Extra">
+		<exclude name="Universal.Arrays.DisallowShortArraySyntax"/>
+		<exclude name="WordPress.PHP.YodaConditions.NotYoda"/>
+		<!-- Public helper signatures predate PHP named arguments. -->
+		<exclude name="Universal.NamingConventions.NoReservedKeywordParameterNames"/>
+	</rule>
+	<rule ref="PHPCompatibilityWP"/>
+	<rule ref="Generic.Arrays.DisallowLongArraySyntax"/>
+	<rule ref="WordPress.WP.I18n">
+		<properties>
+			<property name="text_domain" type="array">
+				<element value="wp-private"/>
+			</property>
+		</properties>
+	</rule>
+	<rule ref="WordPress.NamingConventions.PrefixAllGlobals">
+		<properties>
+			<property name="prefixes" type="array">
+				<element value="wp_private"/>
+				<element value="WpPrivate"/>
+				<element value="WP_PRIVATE"/>
+				<element value="wpp_test"/>
+			</property>
+			<!-- Test cases that extend our shared base class count as test classes (no prefix needed). -->
+			<property name="custom_test_classes" type="array">
+				<element value="WPP_Test_Case"/>
+			</property>
+		</properties>
+	</rule>
+	<rule ref="WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedConstantFound">
+		<!-- The WordPress test config must define core's own constants (DB_NAME, AUTH_KEY, ...). -->
+		<exclude-pattern>/tests/phpunit/wp-tests-config.php</exclude-pattern>
+	</rule>
+	<rule ref="WordPress.Files.FileName.InvalidClassFileName">
+		<exclude-pattern>/tests/phpunit/*</exclude-pattern>
+	</rule>
+	<rule ref="WordPress.Files.FileName.NotHyphenatedLowercase">
+		<exclude-pattern>/tests/phpunit/*</exclude-pattern>
+	</rule>
+	<!-- Fixture configs, loader and themes of the user-config suite: named after what they are, not as classes. -->
+	<rule ref="WordPress.Files.FileName">
+		<exclude-pattern>/tests/user-configs/*</exclude-pattern>
+	</rule>
+	<rule ref="WordPress.WP.GlobalVariablesOverride.Prohibited">
+		<exclude-pattern>/tests/phpunit/tests/*</exclude-pattern>
+		<exclude-pattern>/tests/phpunit/includes/class-wpp-scenarios.php</exclude-pattern>
+	</rule>
+	<rule ref="WordPress.WP.EnqueuedResources">
+		<exclude-pattern>/tests/*</exclude-pattern>
+	</rule>
+</ruleset>

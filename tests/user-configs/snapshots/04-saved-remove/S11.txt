@@ -1,0 +1,8 @@
+=== per-field options after the first request on the new build ===
+wp_private_settings_type: custom
+wp_private_settings_before_html: <div class="wpp-removed">WPPWRAP-04-BEFORE
+wp_private_settings_after_html: WPPWRAP-04-AFTER</div>
+wp_private_settings_authorized_text: <p>Not for you.</p>
+wp_private_settings_blocked_users: a:1:{i:0;s:6:"800003";}
+wp_private_settings_custom_login_page_url:
+

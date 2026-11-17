@@ -1,0 +1,10 @@
+=== ungated post and REST ===
+plugin assets: none
+query on a wp_private option: none
+cookies: none
+prompt module loaded: no
+<main class="wp-block-group is-layout-flow wp-block-group-is-layout-flow"><h2 class="wp-block-post-title">Plain post</h2>
+<div class="entry-content wp-block-post-content is-layout-flow wp-block-post-content-is-layout-flow">
+<p>Nothing gated here WPPOPEN-01.</p>
+</div></main>
+

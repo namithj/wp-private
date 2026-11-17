@@ -1,0 +1,15 @@
+=== permitted viewer ===
+identical to the ungated post: yes
+First secret quillfeather11 WPPMARK-11-A
+
+
+
+<p>Between the gates.</p>
+
+
+Second secret WPPMARK-11-B nested WPPMARK-11-C
+
+
+
+<ul class="wp-block-list"><li>Open item</li><li>Listed secret WPPMARK-11-D</li></ul>
+

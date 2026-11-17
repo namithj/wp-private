@@ -1,0 +1,8 @@
+=== REST post, logged out ===
+status: 200
+stray output: none
+--- content.rendered
+<p>Open intro.</p>
+--- excerpt.rendered
+<p>Open intro.</p>
+

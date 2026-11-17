@@ -1,0 +1,8 @@
+=== per-field options after the first request on the new build ===
+wp_private_settings_type: link
+wp_private_settings_before_html: <p class="wpp-old">Hello &amp; welcome.
+wp_private_settings_after_html: </p>
+wp_private_settings_authorized_text: <b>You are not permitted &amp; that is final</b>
+wp_private_settings_blocked_users: a:2:{i:0;i:800003;i:1;i:800004;}
+wp_private_settings_custom_login_page_url:
+

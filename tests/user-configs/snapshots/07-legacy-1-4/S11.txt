@@ -1,0 +1,8 @@
+=== per-field options after the first request on the new build ===
+wp_private_settings_type: form
+wp_private_settings_before_html: <br/><div id="wp-private-box"><b>This is protected content.
+wp_private_settings_after_html: </b></div><br/>
+wp_private_settings_authorized_text: <b>You are not permitted to view Premium Content</b>
+wp_private_settings_blocked_users: a:1:{i:0;i:800003;}
+wp_private_settings_custom_login_page_url: http://example.org/old-login/
+

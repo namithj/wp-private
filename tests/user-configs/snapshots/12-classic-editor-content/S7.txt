@@ -1,0 +1,10 @@
+=== permitted viewer ===
+identical to the ungated post: yes
+<p>First paragraph.</p>
+<br />
+Secret paragraph one quillfeather12 WPPMARK-12-A.</p>
+<p>Secret paragraph two.<br />
+A line break inside WPPMARK-12-B.<br />
+<p>Inline: before inline secret WPPMARK-12-C after.</p>
+<p>Last paragraph.</p>
+

@@ -1,0 +1,11 @@
+=== REST post, logged out ===
+status: 200
+stray output: none
+--- content.rendered
+<p>First paragraph.</p>
+<div class="wpp-box"><a class="wp-private-login" href="http://example.org/wp-login.php?redirect_to=http%3A%2F%2Fexample.org%2Fgated%2F">Log in</a></div>
+<p>Inline: before <div class="wpp-box"><a class="wp-private-login" href="http://example.org/wp-login.php?redirect_to=http%3A%2F%2Fexample.org%2Fgated%2F">Log in</a></div> after.</p>
+<p>Last paragraph.</p>
+--- excerpt.rendered
+<p>First paragraph. Inline: before after. Last paragraph.</p>
+

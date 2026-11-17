@@ -1,0 +1,7 @@
+=== login round trip ===
+mode: link
+return address (after one decode): http://example.org/gated/
+lands on: http://example.org/gated/
+link in REST/feed output: http://example.org/member-login/?redirect=http%3A%2F%2Fexample.org%2Fgated%2F
+custom login page form posts: http://example.org/gated/
+

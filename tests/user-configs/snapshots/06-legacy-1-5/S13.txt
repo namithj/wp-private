@@ -1,0 +1,9 @@
+=== ungated post and REST ===
+plugin assets: none
+query on a wp_private option: none
+cookies: none
+prompt module loaded: no
+<main>
+<h2>Plain post</h2><p>Nothing gated here WPPOPEN-06.</p>
+</main>
+

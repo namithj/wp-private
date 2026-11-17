@@ -1,0 +1,8 @@
+=== blocked user blocked ===
+<main>
+<h2>Gated post</h2><p>First paragraph.</p>
+<p>Blocked.</p>
+<p>Inline: before <p>Blocked.</p> after.</p>
+<p>Last paragraph.</p>
+</main>
+

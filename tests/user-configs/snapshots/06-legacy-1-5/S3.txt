@@ -1,0 +1,10 @@
+=== REST post, logged out ===
+status: 200
+stray output: none
+--- content.rendered
+<p>Open intro.</p>
+<p class="wpp-old">Hello &amp; welcome. <a class="wp-private-login" href="http://example.org/wp-login.php?redirect_to=http%3A%2F%2Fexample.org%2Fgated%2F">Log in</a></p>
+<p>Open outro.</p>
+--- excerpt.rendered
+<p>Open intro. Open outro.</p>
+

@@ -1,0 +1,8 @@
+=== settings: load, save unchanged, reload ===
+wp_private_settings_type: stored -> unchanged
+wp_private_settings_before_html: stored -> unchanged
+wp_private_settings_after_html: stored -> unchanged
+wp_private_settings_authorized_text: (absent) -> CHANGED  now 'You do not have permission to view this content.'
+wp_private_settings_blocked_users: (absent) -> CHANGED  now 'a:0:{}'
+wp_private_settings_custom_login_page_url: (absent) -> CHANGED  now ''
+

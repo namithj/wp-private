@@ -1,0 +1,9 @@
+=== feed, logged out ===
+well-formed: yes
+--- item: Gated post
+description: Open intro.
+encoded: <p>Open intro.</p>
+--- item: Plain post
+description: Nothing gated here WPPOPEN-04.
+encoded: <p>Nothing gated here WPPOPEN-04.</p>
+

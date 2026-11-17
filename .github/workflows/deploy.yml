@@ -1,0 +1,80 @@
+name: Deploy to WordPress.org
+
+# Run by hand after the Release workflow. Builds the ZIP from the tag and
+# publishes it to the plugin's WordPress.org SVN repository, together with the
+# listing assets in .wordpress-org/. Dry run is on by default.
+#
+# Secrets (names only; values are set in the repository's "wordpress-org"
+# environment): SVN_USERNAME, SVN_PASSWORD.
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Release tag to publish, for example v2.0.0'
+        required: true
+        type: string
+      dry_run:
+        description: 'Dry run (skip the SVN commit)'
+        required: false
+        default: true
+        type: boolean
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    name: Publish to WordPress.org
+    runs-on: ubuntu-latest
+    environment: wordpress-org
+
+    steps:
+      - name: Checkout the release tag
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ inputs.tag }}
+          fetch-depth: 0
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@eb7c497e18156a6bbabfef1d3a82760b9eda3962 # v2.40.0
+        with:
+          php-version: '8.3'
+          tools: composer
+          coverage: none
+
+      - name: Verify the tag's files carry the tag's version
+        shell: bash
+        env:
+          TAG: ${{ inputs.tag }}
+        run: |
+          VERSION="${TAG#v}"
+          bash bin/set-version.sh --check "${VERSION}"
+          bash bin/check-tested-up-to.sh
+          echo "DEPLOY_VERSION=${VERSION}" >> "${GITHUB_ENV}"
+
+      - name: Install Composer dependencies
+        run: composer install --no-progress --prefer-dist --no-interaction
+
+      - name: Verify coding standards
+        run: composer lint:release
+
+      - name: Build release ZIP
+        shell: bash
+        run: |
+          bash bin/build-release.sh "${RUNNER_TEMP}/dist"
+          bash bin/check-release-zip.sh "${RUNNER_TEMP}/dist/wp-private-${DEPLOY_VERSION}.zip"
+          mkdir -p "${RUNNER_TEMP}/deploy"
+          unzip -q "${RUNNER_TEMP}/dist/wp-private-${DEPLOY_VERSION}.zip" -d "${RUNNER_TEMP}/deploy"
+
+      - name: Deploy to WordPress.org
+        uses: 10up/action-wordpress-plugin-deploy@54bd289b8525fd23a5c365ec369185f2966529c2 # 2.3.0
+        env:
+          SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
+          SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
+          SLUG: wp-private
+          VERSION: ${{ env.DEPLOY_VERSION }}
+          BUILD_DIR: ${{ runner.temp }}/deploy/wp-private
+          ASSETS_DIR: .wordpress-org
+        with:
+          dry-run: ${{ inputs.dry_run }}

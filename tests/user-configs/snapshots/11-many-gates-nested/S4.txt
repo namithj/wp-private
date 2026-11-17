@@ -1,0 +1,12 @@
+=== feed, logged out ===
+well-formed: yes
+--- item: Gated post
+description: Between the gates. Open item
+encoded: <div class="wpp-box"><a class="wp-private-login" href="http://example.org/wp-login.php?redirect_to=http%3A%2F%2Fexample.org%2Fgated%2F">Log in</a></div>
+<p>Between the gates.</p>
+<div class="wpp-box"><a class="wp-private-login" href="http://example.org/wp-login.php?redirect_to=http%3A%2F%2Fexample.org%2Fgated%2F">Log in</a></div>
+<ul class="wp-block-list"><li>Open item</li><li><div class="wpp-box"><a class="wp-private-login" href="http://example.org/wp-login.php?redirect_to=http%3A%2F%2Fexample.org%2Fgated%2F">Log in</a></div></li></ul>
+--- item: Plain post
+description: Nothing gated here WPPOPEN-11.
+encoded: <p>Nothing gated here WPPOPEN-11.</p>
+

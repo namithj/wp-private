@@ -1,0 +1,5 @@
+=== head and excerpts, logged out ===
+head mentions of wp-private: 0
+excerpt: Open intro. Open outro.
+embed excerpt: <p>Open intro. Open outro.</p>
+

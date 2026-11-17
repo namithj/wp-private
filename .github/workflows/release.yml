@@ -1,0 +1,83 @@
+name: Release
+
+# Runs when a version tag is pushed. Builds the ZIP, asserts on its contents and
+# attaches it to a GitHub release. WordPress.org is published by the separate
+# "Deploy to WordPress.org" workflow, run by hand.
+
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Existing tag to (re)release, for example v2.0.0'
+        required: true
+        type: string
+
+concurrency:
+  group: release-${{ inputs.tag || github.ref_name }}
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  version:
+    name: Version check
+    uses: ./.github/workflows/version-sync.yml
+    with:
+      tag: ${{ inputs.tag || github.ref_name }}
+
+  build:
+    name: Build and publish release
+    needs: version
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    env:
+      TAG: ${{ inputs.tag || github.ref_name }}
+
+    steps:
+      - name: Checkout the tag
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ inputs.tag || github.ref_name }}
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@eb7c497e18156a6bbabfef1d3a82760b9eda3962 # v2.40.0
+        with:
+          php-version: '8.3'
+          tools: composer, wp-cli
+          coverage: none
+
+      - name: Verify "Tested up to" covers the current WordPress release
+        run: bash bin/check-tested-up-to.sh
+
+      - name: Install Composer dependencies
+        run: composer install --no-progress --prefer-dist --no-interaction
+
+      - name: Verify coding standards and static analysis
+        run: |
+          composer lint:release
+          composer analyse
+
+      - name: Verify the .pot extracts
+        run: bash bin/make-pot.sh .cache/wp-private.pot
+
+      - name: Build release ZIP
+        shell: bash
+        run: |
+          bash bin/build-release.sh "${RUNNER_TEMP}/dist"
+          ZIP="$( ls "${RUNNER_TEMP}"/dist/wp-private-*.zip )"
+          bash bin/check-release-zip.sh "${ZIP}"
+          ( cd "$( dirname "${ZIP}" )" && sha256sum "$( basename "${ZIP}" )" | tee "$( basename "${ZIP}" ).sha256" )
+          echo "ZIP_PATH=${ZIP}" >> "${GITHUB_ENV}"
+
+      - name: Create or update GitHub release
+        uses: softprops/action-gh-release@8a0cd651e5b2365bd640854a3fa5dfc70e4875f3 # v3.0.4
+        with:
+          tag_name: ${{ inputs.tag || github.ref_name }}
+          files: |
+            ${{ env.ZIP_PATH }}
+            ${{ env.ZIP_PATH }}.sha256
+          generate_release_notes: true

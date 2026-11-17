@@ -1,0 +1,8 @@
+=== per-field options after the first request on the new build ===
+wp_private_settings_type: form
+wp_private_settings_before_html: <br/><div id="wp-private-box"><b>This is protected content.
+wp_private_settings_after_html: </b></div><br/>
+wp_private_settings_authorized_text: (absent)
+wp_private_settings_blocked_users: (absent)
+wp_private_settings_custom_login_page_url: (absent)
+

@@ -1,0 +1,50 @@
+# Paths excluded from the distributed plugin.
+#
+# Every pattern is anchored with a leading slash so it matches only at the
+# repository root. rsync — used by bin/build-release.sh and by the WordPress.org
+# deploy action — matches an unanchored pattern at *any* depth, so a bare
+# "vendor" would also strip nested folders the plugin needs at runtime.
+#
+/.ai
+/.git
+/.github
+/.vscode
+/.cache
+/.distignore
+/.editorconfig
+/.gitattributes
+/.gitignore
+/bin
+# composer.json ships: Plugin Check (missing_composer_json_file) wants it next to vendor/, and it tells reviewers which packages are bundled.
+/composer.lock
+/phpcs.xml
+/phpcs.xml.dist
+/phpstan.neon.dist
+/.phpunit.result.cache
+/phpunit.xml
+/phpunit.xml.dist
+/tests
+/SECURITY.md
+/dist
+/*.zip
+# Dev-only Composer packages never ship; autoload.php and composer/ stay.
+/vendor/bin
+# Framework folders that are not runtime code.
+/vendor-prefixed/pedalcms/*/tests
+/vendor-prefixed/pedalcms/*/docs
+/vendor-prefixed/pedalcms/*/examples
+/vendor-prefixed/pedalcms/*/bin
+/vendor-prefixed/pedalcms/*/composer.lock
+/vendor-prefixed/pedalcms/*/phpcs.xml.dist
+/vendor-prefixed/pedalcms/*/phpstan.neon.dist
+/vendor-prefixed/pedalcms/*/phpunit.xml
+/vendor-prefixed/pedalcms/*/phpunit.xml.dist
+/vendor-prefixed/pedalcms/*/.github
+/vendor-prefixed/pedalcms/*/.distignore
+/vendor-prefixed/pedalcms/*/.editorconfig
+/vendor-prefixed/pedalcms/*/.gitignore
+/vendor-prefixed/pedalcms/*/.wp-env.json
+# Assets for the WordPress.org listing live in .wordpress-org (SVN assets), not in the plugin.
+/.wordpress-org
+# Root screenshots are the 1.6.1 UI: not current, never shipped.
+/screenshot-*.png

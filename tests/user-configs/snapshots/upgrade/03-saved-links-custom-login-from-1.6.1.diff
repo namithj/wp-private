@@ -1,0 +1,65 @@
+##### S1
+@@ @@
+ <main class="wp-block-group is-layout-flow wp-block-group-is-layout-flow"><h2 class="wp-block-post-title">Gated post</h2>
+ <div class="entry-content wp-block-post-content is-layout-flow wp-block-post-content-is-layout-flow">
+ <p>Open intro.</p>
+-<p class="wpp-note">Please <a href="http://example.org/member-login/?redirect=%2Fgated%2F">Login</a> or <a href="http://example.org/wp-login.php?action=register">Register</a> for access.</p>
++<p class="wpp-note"><a class="wp-private-login" href="http://example.org/member-login/?redirect=http%3A%2F%2Fexample.org%2Fgated%2F">Log in</a> or <a class="wp-private-register" href="http://example.org/wp-login.php?action=register">Register</a> to read this content.</p>
+ </div></main>
+ 
+
+##### S2
+@@ @@
+ <div class="wp-block-post-excerpt"><p class="wp-block-post-excerpt__excerpt">Open intro. </p></div>
+ <div class="entry-content wp-block-post-content is-layout-flow wp-block-post-content-is-layout-flow">
+ <p>Open intro.</p>
+-<p class="wpp-note">Please <a href="http://example.org/member-login/?redirect=%2F">Login</a> or <a href="http://example.org/wp-login.php?action=register">Register</a> for access.</p>
++<p class="wpp-note"><a class="wp-private-login" href="http://example.org/member-login/?redirect=http%3A%2F%2Fexample.org%2F">Log in</a> or <a class="wp-private-register" href="http://example.org/wp-login.php?action=register">Register</a> to read this content.</p>
+ </div>
+ </li><li class="wp-block-post post-900002 post type-post status-publish format-standard hentry category-uncategorized">
+ <h2 class="wp-block-post-title">Plain post</h2>
+@@ @@
+ <div class="wp-block-post-excerpt"><p class="wp-block-post-excerpt__excerpt">Open intro. </p></div>
+ <div class="entry-content wp-block-post-content is-layout-flow wp-block-post-content-is-layout-flow">
+ <p>Open intro.</p>
+-<p class="wpp-note">Please <a href="http://example.org/member-login/?redirect=%2F%3Fcat%3D1">Login</a> or <a href="http://example.org/wp-login.php?action=register">Register</a> for access.</p>
++<p class="wpp-note"><a class="wp-private-login" href="http://example.org/member-login/?redirect=http%3A%2F%2Fexample.org%2F%3Fcat%3D1">Log in</a> or <a class="wp-private-register" href="http://example.org/wp-login.php?action=register">Register</a> to read this content.</p>
+ </div>
+ </li><li class="wp-block-post post-900002 post type-post status-publish format-standard hentry category-uncategorized">
+ <h2 class="wp-block-post-title">Plain post</h2>
+@@ @@
+ <div class="wp-block-post-excerpt"><p class="wp-block-post-excerpt__excerpt">Open intro. </p></div>
+ <div class="entry-content wp-block-post-content is-layout-flow wp-block-post-content-is-layout-flow">
+ <p>Open intro.</p>
+-<p class="wpp-note">Please <a href="http://example.org/member-login/?redirect=%2F%3Fm%3D202611">Login</a> or <a href="http://example.org/wp-login.php?action=register">Register</a> for access.</p>
++<p class="wpp-note"><a class="wp-private-login" href="http://example.org/member-login/?redirect=http%3A%2F%2Fexample.org%2F%3Fm%3D202611">Log in</a> or <a class="wp-private-register" href="http://example.org/wp-login.php?action=register">Register</a> to read this content.</p>
+ </div>
+ </li><li class="wp-block-post post-900002 post type-post status-publish format-standard hentry category-uncategorized">
+ <h2 class="wp-block-post-title">Plain post</h2>
+
+##### S3
+@@ @@
+ stray output: none
+ --- content.rendered
+ <p>Open intro.</p>
+-<p class="wpp-note">Please <a href="http://example.org/member-login/?redirect=%2F%3Fm%3D202611">Login</a> or <a href="http://example.org/wp-login.php?action=register">Register</a> for access.</p>
++<p class="wpp-note"><a class="wp-private-login" href="http://example.org/member-login/?redirect=http%3A%2F%2Fexample.org%2Fgated%2F">Log in</a> or <a class="wp-private-register" href="http://example.org/wp-login.php?action=register">Register</a> to read this content.</p>
+ --- excerpt.rendered
+ <p>Open intro.</p>
+ 
+
+##### S4
+@@ @@
+ --- item: Gated post
+ description: Open intro.
+ encoded: <p>Open intro.</p>
+-<p class="wpp-note">Please <a href="http://example.org/member-login/?redirect=%2F%3Ffeed%3Drss2">Login</a> or <a href="http://example.org/wp-login.php?action=register">Register</a> for access.</p>
++<p class="wpp-note"><a class="wp-private-login" href="http://example.org/member-login/?redirect=http%3A%2F%2Fexample.org%2Fgated%2F">Log in</a> or <a class="wp-private-register" href="http://example.org/wp-login.php?action=register">Register</a> to read this content.</p>
+ --- item: Plain post
+ description: Nothing gated here WPPOPEN-03.
+ encoded: <p>Nothing gated here WPPOPEN-03.</p>
+
+##### S5 identical
+##### S6 identical
+##### S7 identical
+##### S8 identical

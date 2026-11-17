@@ -1,0 +1,8 @@
+=== single post, logged out ===
+doctype first: yes
+<main class="wp-block-group is-layout-flow wp-block-group-is-layout-flow"><h2 class="wp-block-post-title">Gated post</h2>
+<div class="entry-content wp-block-post-content is-layout-flow wp-block-post-content-is-layout-flow">
+<p>Open intro.</p>
+<p class="wpp-note"><a class="wp-private-login" href="http://example.org/member-login/?redirect=http%3A%2F%2Fexample.org%2Fgated%2F">Log in</a> or <a class="wp-private-register" href="http://example.org/wp-login.php?action=register">Register</a> to read this content.</p>
+</div></main>
+

@@ -1,0 +1,104 @@
+##### S1
+@@ @@
+ <main class="wp-block-group is-layout-flow wp-block-group-is-layout-flow"><h2 class="wp-block-post-title">Gated post</h2>
+ <div class="entry-content wp-block-post-content is-layout-flow wp-block-post-content-is-layout-flow">
+ <p>Open intro.</p>
++<br/><div id="wp-private-box"><b>This is protected content. <form name="wp-private-loginform-1" id="wp-private-loginform-1" action="http://example.org/wp-login.php" method="post"><p class="login-username">
++<label for="wp-private-user-login-1">Username or Email Address</label>
++<input type="text" name="log" id="wp-private-user-login-1" autocomplete="username" class="input" value="" size="20" />
++</p><p class="login-password">
++<label for="wp-private-user-pass-1">Password</label>
++<input type="password" name="pwd" id="wp-private-user-pass-1" autocomplete="current-password" spellcheck="false" class="input" value="" size="20" />
++</p><p class="login-remember"><label><input name="rememberme" type="checkbox" id="wp-private-rememberme-1" value="forever" /> Remember Me</label></p><p class="login-submit">
++<input type="submit" name="wp-submit" id="wp-private-submit-1" class="button button-primary" value="Log In" />
++<input type="hidden" name="redirect_to" value="http://example.org/gated/" />
++</p></form></b></div><br/>
+ </div></main>
+ 
+
+##### S2
+@@ @@
+ <div class="wp-block-post-excerpt"><p class="wp-block-post-excerpt__excerpt">Open intro. </p></div>
+ <div class="entry-content wp-block-post-content is-layout-flow wp-block-post-content-is-layout-flow">
+ <p>Open intro.</p>
++<br/><div id="wp-private-box"><b>This is protected content. <form name="wp-private-loginform-1" id="wp-private-loginform-1" action="http://example.org/wp-login.php" method="post"><p class="login-username">
++<label for="wp-private-user-login-1">Username or Email Address</label>
++<input type="text" name="log" id="wp-private-user-login-1" autocomplete="username" class="input" value="" size="20" />
++</p><p class="login-password">
++<label for="wp-private-user-pass-1">Password</label>
++<input type="password" name="pwd" id="wp-private-user-pass-1" autocomplete="current-password" spellcheck="false" class="input" value="" size="20" />
++</p><p class="login-remember"><label><input name="rememberme" type="checkbox" id="wp-private-rememberme-1" value="forever" /> Remember Me</label></p><p class="login-submit">
++<input type="submit" name="wp-submit" id="wp-private-submit-1" class="button button-primary" value="Log In" />
++<input type="hidden" name="redirect_to" value="http://example.org/" />
++</p></form></b></div><br/>
+ </div>
+ </li><li class="wp-block-post post-900002 post type-post status-publish format-standard hentry category-uncategorized">
+ <h2 class="wp-block-post-title">Plain post</h2>
+@@ @@
+ <div class="wp-block-post-excerpt"><p class="wp-block-post-excerpt__excerpt">Open intro. </p></div>
+ <div class="entry-content wp-block-post-content is-layout-flow wp-block-post-content-is-layout-flow">
+ <p>Open intro.</p>
++<br/><div id="wp-private-box"><b>This is protected content. <form name="wp-private-loginform-1" id="wp-private-loginform-1" action="http://example.org/wp-login.php" method="post"><p class="login-username">
++<label for="wp-private-user-login-1">Username or Email Address</label>
++<input type="text" name="log" id="wp-private-user-login-1" autocomplete="username" class="input" value="" size="20" />
++</p><p class="login-password">
++<label for="wp-private-user-pass-1">Password</label>
++<input type="password" name="pwd" id="wp-private-user-pass-1" autocomplete="current-password" spellcheck="false" class="input" value="" size="20" />
++</p><p class="login-remember"><label><input name="rememberme" type="checkbox" id="wp-private-rememberme-1" value="forever" /> Remember Me</label></p><p class="login-submit">
++<input type="submit" name="wp-submit" id="wp-private-submit-1" class="button button-primary" value="Log In" />
++<input type="hidden" name="redirect_to" value="http://example.org/?cat=1" />
++</p></form></b></div><br/>
+ </div>
+ </li><li class="wp-block-post post-900002 post type-post status-publish format-standard hentry category-uncategorized">
+ <h2 class="wp-block-post-title">Plain post</h2>
+@@ @@
+ <div class="wp-block-post-excerpt"><p class="wp-block-post-excerpt__excerpt">Open intro. </p></div>
+ <div class="entry-content wp-block-post-content is-layout-flow wp-block-post-content-is-layout-flow">
+ <p>Open intro.</p>
++<br/><div id="wp-private-box"><b>This is protected content. <form name="wp-private-loginform-1" id="wp-private-loginform-1" action="http://example.org/wp-login.php" method="post"><p class="login-username">
++<label for="wp-private-user-login-1">Username or Email Address</label>
++<input type="text" name="log" id="wp-private-user-login-1" autocomplete="username" class="input" value="" size="20" />
++</p><p class="login-password">
++<label for="wp-private-user-pass-1">Password</label>
++<input type="password" name="pwd" id="wp-private-user-pass-1" autocomplete="current-password" spellcheck="false" class="input" value="" size="20" />
++</p><p class="login-remember"><label><input name="rememberme" type="checkbox" id="wp-private-rememberme-1" value="forever" /> Remember Me</label></p><p class="login-submit">
++<input type="submit" name="wp-submit" id="wp-private-submit-1" class="button button-primary" value="Log In" />
++<input type="hidden" name="redirect_to" value="http://example.org/?m=202611" />
++</p></form></b></div><br/>
+ </div>
+ </li><li class="wp-block-post post-900002 post type-post status-publish format-standard hentry category-uncategorized">
+ <h2 class="wp-block-post-title">Plain post</h2>
+
+##### S3
+@@ @@
+ stray output: none
+ --- content.rendered
+ <p>Open intro.</p>
++<br/><div id="wp-private-box"><b>This is protected content. <a class="wp-private-login" href="http://example.org/wp-login.php?redirect_to=http%3A%2F%2Fexample.org%2Fgated%2F">Log in</a></b></div><br/>
+ --- excerpt.rendered
+ <p>Open intro.</p>
+ 
+
+##### S4
+@@ @@
+ --- item: Gated post
+ description: Open intro.
+ encoded: <p>Open intro.</p>
++<br/><div id="wp-private-box"><b>This is protected content. <a class="wp-private-login" href="http://example.org/wp-login.php?redirect_to=http%3A%2F%2Fexample.org%2Fgated%2F">Log in</a></b></div><br/>
+ --- item: Plain post
+ description: Nothing gated here WPPOPEN-08.
+ encoded: <p>Nothing gated here WPPOPEN-08.</p>
+
+##### S5 identical
+##### S6 identical
+##### S7
+@@ @@
+ === permitted viewer ===
+-identical to the ungated post: no
++identical to the ungated post: yes
+ <p>Open intro.</p>
++
++
++Secret quillfeather08 WPPMARK-08-A
+ 
+

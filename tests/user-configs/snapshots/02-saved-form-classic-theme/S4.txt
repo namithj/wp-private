@@ -1,0 +1,11 @@
+=== feed, logged out ===
+well-formed: yes
+--- item: Gated post
+description: Open intro. Open outro.
+encoded: <p>Open intro.</p>
+<div class="wpp-box"><b>Members only</b> &amp; friends. <a class="wp-private-login" href="http://example.org/wp-login.php?redirect_to=http%3A%2F%2Fexample.org%2Fgated%2F">Log in</a></div>
+<p>Open outro.</p>
+--- item: Plain post
+description: Nothing gated here WPPOPEN-02.
+encoded: <p>Nothing gated here WPPOPEN-02.</p>
+
