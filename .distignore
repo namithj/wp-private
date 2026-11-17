@@ -46,5 +46,5 @@
 /vendor-prefixed/pedalcms/*/.wp-env.json
 # Assets for the WordPress.org listing live in .wordpress-org (SVN assets), not in the plugin.
 /.wordpress-org
-# Root screenshots are the 1.6.1 UI: not current, never shipped.
-/screenshot-*.png
+# Sources and render script of the listing artwork.
+/assets/artwork

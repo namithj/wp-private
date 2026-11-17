@@ -49,6 +49,7 @@
         "platform": {
             "php": "8.2.0"
         },
+        "autoloader-suffix": "WpPrivate",
         "platform-check": false,
         "sort-packages": true
     },
@@ -74,7 +75,7 @@
         ],
         "test:multisite": [
             "Composer\\Config::disableProcessTimeout",
-            "WP_TESTS_MULTISITE=1 bash bin/phpunit.sh --group multisite"
+            "WP_TESTS_MULTISITE=1 bash bin/phpunit.sh -c tests/phpunit/multisite.xml"
         ],
         "test:upgrade": "bash bin/test-upgrade-path.sh",
         "test:all": [

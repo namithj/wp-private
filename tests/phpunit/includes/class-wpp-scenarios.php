@@ -526,7 +526,9 @@ class WPP_Scenarios {
 		$this->no_marker( 'S5', 'get_the_excerpt()', $excerpt );
 		$this->no_marker( 'S5', 'the embed excerpt', $embed );
 
-		$mentions = preg_match_all( '/wp-private/i', $head );
+		// The prompt stylesheet is expected output; whether it sits in <head> depends on the WordPress version
+		// (6.9+ moves late styles of classic themes into the head), so its own <link> tag is not counted.
+		$mentions = preg_match_all( '/wp-private/i', (string) preg_replace( "#<link[^>]+id=['\"]wp-private-prompt-css['\"][^>]*>#i", '', $head ) );
 		$this->section( 'S5', 'head and excerpts, logged out', "head mentions of wp-private: {$mentions}\nexcerpt: " . WPP_Normaliser::html( $excerpt ) . "\nembed excerpt: " . WPP_Normaliser::html( $embed ) );
 	}
 

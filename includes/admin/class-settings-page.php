@@ -21,6 +21,8 @@ if ( ! defined( 'ABSPATH' ) ) {
  * rendering with the page's own callback is how the screen shows no admin notice and no library string on a
  * supported site (fallback for WP-CMF-3).
  *
+ * - The fields sit in one wrapper group holding a tabs field (top-level tabs are rejected on settings pages). The
+ *   quick-start card is printed by render(), because a custom_html field would register an extra option.
  * - Page id Settings::PAGE_ID, so cassette-cmf stores one option per field: wp_private_settings_{field} (C-4.1).
  *   The page declares no schema_version, so the library writes nothing besides those options.
  * - Every other part of the plugin reads the values through Settings.
@@ -38,8 +40,10 @@ class Settings_Page {
 	 * @return void
 	 */
 	public static function init() {
-		// Priority 5, like SwiftForms: cassette-cmf wants its pages before init finishes.
+		// Priority 5: cassette-cmf registers its pages before init finishes.
 		add_action( 'init', [ self::class, 'register' ], 5 );
+		// Priority 20: after cassette-cmf has queued its own script (priority 10), which ours depends on.
+		add_action( 'admin_enqueue_scripts', [ self::class, 'enqueue_assets' ], 20 );
 	}
 
 	/**
@@ -85,83 +89,152 @@ class Settings_Page {
 			'callback'    => [ self::class, 'render' ],
 			'fields'      => [
 				[
-					'name'        => 'how_to_block',
-					'type'        => 'group',
-					'label'       => __( 'How to block content', 'wp-private' ),
-					'description' => __( 'Surround the text to hide from visitors with [protected] and [/protected] in a post or page.', 'wp-private' ),
-					'fields'      => [],
-				],
-				[
-					'name'        => 'replacement',
-					'type'        => 'group',
-					'label'       => __( 'What visitors see instead', 'wp-private' ),
-					'description' => '',
-					'fields'      => [
-						[
-							'name'    => 'type',
-							'type'    => 'radio',
-							'label'   => __( 'Replace blocked content with', 'wp-private' ),
-							'default' => 'form',
-							'options' => [
-								'form'   => __( 'A login form', 'wp-private' ),
-								'link'   => __( 'Login and register links', 'wp-private' ),
-								'custom' => __( 'Nothing (just remove it)', 'wp-private' ),
-							],
-						],
-						[
-							'name'        => 'before_html',
-							'type'        => Html_Field::TYPE,
-							'label'       => __( 'HTML before the prompt', 'wp-private' ),
-							'description' => __( 'Shown to logged-out visitors, before the login form or links.', 'wp-private' ),
-							'default'     => Settings::default_before_html(),
-							'rows'        => 4,
-						],
-						[
-							'name'        => 'after_html',
-							'type'        => Html_Field::TYPE,
-							'label'       => __( 'HTML after the prompt', 'wp-private' ),
-							'description' => __( 'Shown to logged-out visitors, after the login form or links.', 'wp-private' ),
-							'default'     => Settings::default_after_html(),
-							'rows'        => 4,
-						],
-					],
-				],
-				[
-					'name'   => 'blocked',
+					'name'   => 'screen',
 					'type'   => 'group',
-					'label'  => __( 'Logged-in users who cannot see protected content', 'wp-private' ),
+					'label'  => '',
 					'fields' => [
 						[
-							'name'        => 'authorized_text',
-							'type'        => Html_Field::TYPE,
-							'label'       => __( 'Message for blocked users', 'wp-private' ),
-							'description' => __( 'Shown instead of the content to logged-in users on the block list.', 'wp-private' ),
-							'default'     => Settings::default_authorized_text(),
-							'rows'        => 4,
-						],
-						[
-							'name'  => 'blocked_users',
-							'type'  => Users_Field::TYPE,
-							'label' => __( 'Block list', 'wp-private' ),
-						],
-					],
-				],
-				[
-					'name'        => 'login',
-					'type'        => 'group',
-					'label'       => __( 'Custom login page', 'wp-private' ),
-					'description' => __( 'You can show a login form anywhere in your posts and pages with the shortcode [loginform].', 'wp-private' ),
-					'fields'      => [
-						[
-							'name'        => 'custom_login_page_url',
-							'type'        => 'url',
-							'label'       => __( 'Custom login page URL', 'wp-private' ),
-							'description' => __( 'The page where you have used the shortcode [loginform]. Leave empty to use the standard login page.', 'wp-private' ),
+							'name'        => 'sections',
+							'type'        => 'tabs',
+							'label'       => '',
+							'orientation' => 'horizontal',
+							'tabs'        => [ self::tab_visitors(), self::tab_blocked() ],
 						],
 					],
 				],
 			],
 		];
+	}
+
+	/**
+	 * Show a field only while the visitors still see a prompt (not with "Nothing").
+	 *
+	 * @return array<string, mixed>
+	 */
+	private static function unless_nothing() {
+		return [
+			'rules' => [
+				[
+					'field'    => 'type',
+					'operator' => '!=',
+					'value'    => 'custom',
+				],
+			],
+		];
+	}
+
+	/**
+	 * The "Logged-out visitors" tab.
+	 *
+	 * @return array<string, mixed>
+	 */
+	private static function tab_visitors() {
+		return [
+			'id'          => 'visitors',
+			'label'       => __( 'Logged-out visitors', 'wp-private' ),
+			'icon'        => 'dashicons-visibility',
+			'description' => __( 'Visitors who aren\'t logged in see this in place of protected content.', 'wp-private' ),
+			'fields'      => [
+				[
+					'name'        => 'type',
+					'type'        => 'radio',
+					'label'       => __( 'What visitors see instead', 'wp-private' ),
+					'default'     => 'form',
+					'options'     => [
+						'form'   => __( 'A login form (recommended)', 'wp-private' ),
+						'link'   => __( 'Links to log in and register', 'wp-private' ),
+						'custom' => __( 'Nothing — hide the content silently', 'wp-private' ),
+					],
+					'description' => __( 'Feeds and apps can\'t show a form, so they always get a Log in link.', 'wp-private' ),
+				],
+				[
+					'name'        => 'custom_login_page_url',
+					'type'        => 'url',
+					'label'       => __( 'Login page', 'wp-private' ),
+					'description' => __( 'Where Log in links take visitors. Create a page with [loginform] and paste its address here. Leave empty for the standard WordPress login page.', 'wp-private' ),
+					'placeholder' => home_url( '/login/' ),
+					'conditional' => self::unless_nothing(),
+				],
+				[
+					'name'        => 'before_html',
+					'type'        => Html_Field::TYPE,
+					'label'       => __( 'Message above', 'wp-private' ),
+					'description' => __( 'HTML shown before the login form or links. The default opens a box that the closing HTML below ends.', 'wp-private' ),
+					'default'     => Settings::default_before_html(),
+					'rows'        => 4,
+					'conditional' => self::unless_nothing(),
+				],
+				[
+					'name'        => 'after_html',
+					'type'        => Html_Field::TYPE,
+					'label'       => __( 'Closing HTML', 'wp-private' ),
+					'description' => __( 'HTML shown after the login form or links. Keep </div> here if the message above opens a box.', 'wp-private' ),
+					'default'     => Settings::default_after_html(),
+					'rows'        => 3,
+					'conditional' => self::unless_nothing(),
+				],
+			],
+		];
+	}
+
+	/**
+	 * The "Blocked users" tab.
+	 *
+	 * @return array<string, mixed>
+	 */
+	private static function tab_blocked() {
+		return [
+			'id'          => 'blocked',
+			'label'       => __( 'Blocked users', 'wp-private' ),
+			'icon'        => 'dashicons-lock',
+			'description' => __( 'Logged-in users on this list can\'t see protected content. Everyone else who is logged in can.', 'wp-private' ),
+			'fields'      => [
+				[
+					'name'  => 'blocked_users',
+					'type'  => Users_Field::TYPE,
+					'label' => __( 'Blocked users', 'wp-private' ),
+				],
+				[
+					'name'        => 'authorized_text',
+					'type'        => Html_Field::TYPE,
+					'label'       => __( 'Message for blocked users', 'wp-private' ),
+					'description' => __( 'Shown to blocked users in place of the protected content.', 'wp-private' ),
+					'default'     => Settings::default_authorized_text(),
+					'rows'        => 4,
+				],
+			],
+		];
+	}
+
+	/**
+	 * Load the screen's stylesheet and script (this screen only).
+	 *
+	 * The script waits for the cassette-cmf script when that is queued, so its tab buttons exist when it runs.
+	 *
+	 * @param string $hook_suffix Current admin page.
+	 * @return void
+	 */
+	public static function enqueue_assets( $hook_suffix ) {
+		if ( 'settings_page_' . self::MENU_SLUG !== $hook_suffix ) {
+			return;
+		}
+		$deps = [ 'jquery', 'wp-a11y' ];
+		if ( wp_script_is( Cmf_Adapter::BOOT['asset_handle'], 'registered' ) ) {
+			$deps[] = Cmf_Adapter::BOOT['asset_handle'];
+		}
+		wp_enqueue_style( 'wp-private-admin', plugins_url( 'assets/css/admin.css', WP_PRIVATE_FILE ), [], WP_PRIVATE_VERSION );
+		wp_enqueue_script( 'wp-private-admin', plugins_url( 'assets/js/admin.js', WP_PRIVATE_FILE ), $deps, WP_PRIVATE_VERSION, true );
+		wp_localize_script(
+			'wp-private-admin',
+			'wpPrivateAdmin',
+			[
+				'i18n' => [
+					'copy'       => __( 'Copy', 'wp-private' ),
+					'copied'     => __( 'Copied to clipboard.', 'wp-private' ),
+					'copyFailed' => __( 'Press Ctrl+C to copy.', 'wp-private' ),
+				],
+			]
+		);
 	}
 
 	/**
@@ -174,8 +247,22 @@ class Settings_Page {
 			return;
 		}
 		?>
-		<div class="wrap">
+		<div class="wrap wp-private-settings">
 			<h1><?php echo esc_html( get_admin_page_title() ); ?></h1>
+			<p class="wp-private-lead"><?php esc_html_e( 'Hide parts of your posts and pages from visitors who aren\'t logged in.', 'wp-private' ); ?></p>
+			<div class="wp-private-quickstart">
+				<h2><?php esc_html_e( 'How to protect content', 'wp-private' ); ?></h2>
+				<ul>
+					<li>
+						<code class="wp-private-snippet">[protected]<?php esc_html_e( 'Members-only content', 'wp-private' ); ?>[/protected]</code>
+						<p class="description"><?php esc_html_e( 'Put this around anything in a post or page that only logged-in users should see.', 'wp-private' ); ?></p>
+					</li>
+					<li>
+						<code class="wp-private-snippet">[loginform]</code>
+						<p class="description"><?php esc_html_e( 'Shows a login form anywhere. Put it on a page of its own to make a custom login page.', 'wp-private' ); ?></p>
+					</li>
+				</ul>
+			</div>
 			<?php settings_errors(); ?>
 			<form method="post" action="options.php">
 				<?php

@@ -9,7 +9,7 @@
  *
  * - WPP_PLUGIN_FILE: the main plugin file to load. Default: this build's wp-private.php.
  *   The upgrade-path group sets it to tests/fixtures/legacy/1.6.1/wp-private.php for the "old" phases.
- * - WPP_LOAD_SWIFTFORMS=1: also load the sibling SwiftForms plugin (config 10, coexistence).
+ * - WPP_LOAD_COEXIST_PLUGIN=1: also load the test-only fixture plugin tests/fixtures/coexist-plugin (config 10, coexistence).
  *
  * @package WpPrivate
  */
@@ -56,8 +56,8 @@ tests_add_filter(
 		require false === $file || '' === $file ? dirname( __DIR__, 2 ) . '/wp-private.php' : $file;
 		// The fixture themes must be known before WordPress picks the active theme: a later process continues a site whose theme is one of them.
 		register_theme_directory( dirname( __DIR__ ) . '/user-configs/themes' );
-		if ( '1' === getenv( 'WPP_LOAD_SWIFTFORMS' ) ) {
-			require dirname( __DIR__, 3 ) . '/swiftforms/swiftforms.php';
+		if ( '1' === getenv( 'WPP_LOAD_COEXIST_PLUGIN' ) ) {
+			require dirname( __DIR__ ) . '/fixtures/coexist-plugin/coexist-plugin.php';
 		}
 	}
 );

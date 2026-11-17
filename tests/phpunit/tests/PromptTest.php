@@ -73,6 +73,9 @@ class PromptTest extends WPP_Test_Case {
 	/**
 	 * The register link follows the site's registration setting, in link mode only.
 	 *
+	 * Single-site only: on a network the link follows the network's registration setting (get_site_option).
+	 *
+	 * @group ms-excluded
 	 * @return void
 	 */
 	public function test_register_link_is_conditional() {

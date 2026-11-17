@@ -140,9 +140,10 @@ Please do not post it in the support forum. Email security@smartlogix.co.in. A p
 
 1. A post on a default block theme, logged out: the teaser, then the login form in place of the hidden part.
 2. The same post, logged in: the full text.
-3. The editor with the shortcode around two paragraphs.
-4. The settings page.
-5. The login link variant.
+3. The block editor: `[protected]` and `[/protected]` in Shortcode blocks around the paragraphs to hide.
+4. The settings page (Settings → WP Private).
+5. The login and register links variant, logged out.
+6. The block list (Settings → WP Private, Blocked users tab): blocked users stay ticked at the top; search to add more.
 
 == Changelog ==
 

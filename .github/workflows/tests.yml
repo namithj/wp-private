@@ -118,13 +118,19 @@ jobs:
       - name: User-config regression (all configs, one after another)
         run: composer test:configs
 
+      # The test steps after this one run even when an earlier one failed, so a
+      # single failure never hides the others.
       - name: PHPUnit
+        if: ${{ !cancelled() }}
         run: composer test
 
       # Old files, this build and 1.6.1 files swapped over one database (S11, S12).
       - name: Upgrade and downgrade path
+        if: ${{ !cancelled() }}
         run: composer test:upgrade
 
-      # The multisite group runs the suite as a network.
-      - name: PHPUnit (multisite group)
+      # The unit suite again, run as a network (tests/phpunit/multisite.xml;
+      # single-site-only tests are tagged @group ms-excluded).
+      - name: PHPUnit (multisite)
+        if: ${{ !cancelled() }}
         run: composer test:multisite

@@ -1,0 +1,95 @@
+/* WP Private settings screen. */
+.wp-private-settings .wp-private-lead {
+	font-size: 14px;
+	max-width: 60em;
+}
+
+.wp-private-settings .wp-private-quickstart {
+	background: #fff;
+	border: 1px solid #c3c4c7;
+	border-radius: 4px;
+	padding: 16px 20px;
+	max-width: 960px;
+	box-sizing: border-box;
+	margin: 16px 0;
+}
+
+.wp-private-settings .wp-private-quickstart h2 {
+	margin-top: 0;
+	font-size: 14px;
+}
+
+.wp-private-settings .wp-private-quickstart ul {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+.wp-private-settings .wp-private-quickstart li {
+	margin-bottom: 12px;
+}
+
+.wp-private-settings .wp-private-snippet {
+	font-size: 13px;
+}
+
+.wp-private-settings .wp-private-copy {
+	margin-inline-start: 8px;
+	vertical-align: middle;
+}
+
+/* The wrapper group's own row has an empty label: hide it, keep the tabs. */
+.wp-private-settings form > .form-table > tbody > tr > th {
+	display: none;
+}
+
+.wp-private-settings form > .form-table > tbody > tr > td {
+	padding: 0;
+}
+
+.wp-private-settings .cassette-cmf-tabs {
+	max-width: 960px;
+}
+
+.wp-private-settings .cassette-cmf-tab-panel > .description {
+	margin: 0 0 8px;
+}
+
+.wp-private-settings .wp-private-user-list {
+	list-style: none;
+	max-height: 260px;
+	overflow: auto;
+	border: 1px solid #dcdcde;
+	padding: 8px 12px;
+	background: #fff;
+	margin: 0 0 8px;
+}
+
+.wp-private-settings .wp-private-user-list li {
+	margin: 2px 0;
+}
+
+.wp-private-settings .wp-private-users-blocked h3,
+.wp-private-settings .wp-private-users-add h3 {
+	font-size: 13px;
+	margin: 16px 0 8px;
+}
+
+.wp-private-settings .wp-private-users-blocked h3 {
+	margin-top: 0;
+}
+
+.wp-private-settings .wp-private-users-add .search-box {
+	float: none;
+	margin: 0 0 8px;
+}
+
+@media (max-width: 782px) {
+	.wp-private-settings .wp-private-quickstart {
+		padding: 12px;
+	}
+
+	.wp-private-settings .wp-private-snippet {
+		word-break: break-all;
+	}
+}

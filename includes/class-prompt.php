@@ -62,6 +62,10 @@ class Prompt {
 
 		$return = self::return_url( $context );
 
+		if ( self::CONTEXT_HTML === $context ) {
+			self::enqueue_style();
+		}
+
 		if ( 'form' === $mode && self::CONTEXT_HTML === $context ) {
 			$body = self::login_form( $return );
 		} else {
@@ -69,6 +73,16 @@ class Prompt {
 		}
 
 		return Settings::before_html() . $body . Settings::after_html();
+	}
+
+	/**
+	 * The prompt's default look. Enqueued only when a prompt is rendered into an HTML page (C-5.4); when the
+	 * prompt renders after wp_head, WordPress prints the stylesheet in the footer.
+	 *
+	 * @return void
+	 */
+	public static function enqueue_style() {
+		wp_enqueue_style( 'wp-private-prompt', plugins_url( 'assets/css/prompt.css', WP_PRIVATE_FILE ), [], WP_PRIVATE_VERSION );
 	}
 
 	/**

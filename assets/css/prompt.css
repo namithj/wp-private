@@ -1,0 +1,90 @@
+/*
+ * WP Private: default look of the prompt shown in place of protected content.
+ * Loaded only on pages that show a prompt. Every selector sits in :where(), so it has zero specificity and
+ * any theme or custom CSS overrides it. Colours derive from the theme's text colour.
+ */
+
+/* The default wrapper on new installs. */
+:where(.wp-private-prompt) {
+	box-sizing: border-box;
+	margin-block: 1.5em;
+	padding: 1.5em 1.75em;
+	border: 1px solid color-mix(in srgb, currentColor 14%, transparent);
+	border-radius: 12px;
+	background: color-mix(in srgb, currentColor 3%, transparent);
+}
+
+:where(.wp-private-prompt) > :where(:first-child) {
+	margin-top: 0;
+}
+
+:where(.wp-private-prompt) > :where(:last-child) {
+	margin-bottom: 0;
+}
+
+/* The login form. */
+:where(form[id^="wp-private-loginform-"]) {
+	max-width: 26rem;
+	margin-block: 1em 0;
+}
+
+:where(form[id^="wp-private-loginform-"]) :where(p) {
+	margin: 0 0 1em;
+}
+
+:where(form[id^="wp-private-loginform-"]) :where(.login-username, .login-password) :where(label) {
+	display: block;
+	margin-bottom: 0.35em;
+	font-size: 0.875em;
+	font-weight: 600;
+}
+
+:where(form[id^="wp-private-loginform-"]) :where(input[type="text"], input[type="password"]) {
+	box-sizing: border-box;
+	width: 100%;
+	padding: 0.6em 0.75em;
+	border: 1px solid color-mix(in srgb, currentColor 30%, transparent);
+	border-radius: 8px;
+	background: transparent;
+	color: inherit;
+	font: inherit;
+	font-size: 1rem;
+}
+
+:where(form[id^="wp-private-loginform-"]) :where(input[type="text"], input[type="password"]):focus {
+	outline: 2px solid currentColor;
+	outline-offset: 1px;
+}
+
+:where(form[id^="wp-private-loginform-"]) :where(.login-remember) :where(label) {
+	display: inline-flex;
+	gap: 0.5em;
+	align-items: center;
+	font-size: 0.875em;
+}
+
+:where(form[id^="wp-private-loginform-"]) :where(.login-submit) {
+	margin-bottom: 0;
+}
+
+:where(form[id^="wp-private-loginform-"]) :where(input[type="submit"]) {
+	padding: 0.65em 1.6em;
+	border: 0;
+	border-radius: 8px;
+	background: var(--wp--preset--color--contrast, #1e1b4b);
+	color: var(--wp--preset--color--base, #fff);
+	font: inherit;
+	font-size: 0.95rem;
+	font-weight: 600;
+	cursor: pointer;
+}
+
+:where(form[id^="wp-private-loginform-"]) :where(input[type="submit"]):hover,
+:where(form[id^="wp-private-loginform-"]) :where(input[type="submit"]):focus-visible {
+	opacity: 0.88;
+}
+
+/* The links variant. */
+:where(.wp-private-login, .wp-private-register) {
+	font-weight: 600;
+}

@@ -134,6 +134,9 @@ class SettingsPageTest extends WPP_Test_Case {
 	/**
 	 * HTML fields: raw for a user with unfiltered_html, wp_kses_post for the rest (S-01).
 	 *
+	 * Single-site only: it assumes a site administrator has unfiltered_html (config 09 and S10 cover the network case).
+	 *
+	 * @group ms-excluded
 	 * @return void
 	 */
 	public function test_html_sanitising_by_capability() {
@@ -195,6 +198,9 @@ class SettingsPageTest extends WPP_Test_Case {
 	/**
 	 * With nothing stored the page shows the defaults; stored markup comes back intact (S-02).
 	 *
+	 * Single-site only: the test admin has unfiltered_html there, so the stored markup is kept as written; on a network it is filtered.
+	 *
+	 * @group ms-excluded
 	 * @return void
 	 */
 	public function test_page_shows_defaults_and_escapes_stored_values() {
@@ -246,6 +252,20 @@ class SettingsPageTest extends WPP_Test_Case {
 	}
 
 	/**
+	 * Split the page into the blocked section and the add section.
+	 *
+	 * @param string $html Page HTML.
+	 * @return array{0: string, 1: string}
+	 */
+	private function sections( $html ) {
+		$start = strpos( $html, 'class="wp-private-users-blocked"' );
+		$mid   = strpos( $html, 'class="wp-private-users-add"' );
+		$this->assertNotFalse( $start );
+		$this->assertNotFalse( $mid );
+		return [ substr( $html, $start, $mid - $start ), substr( $html, $mid ) ];
+	}
+
+	/**
 	 * 250 users with ID 240 stored: a save from a view that shows page 1 only keeps it (A-09).
 	 *
 	 * @return void
@@ -257,36 +277,105 @@ class SettingsPageTest extends WPP_Test_Case {
 		}
 		$blocked = [ $ids[240], $ids[3], 987654 ];
 		update_option( Settings::OPTION_BLOCKED_USERS, $blocked );
+		$box = '/<input type="checkbox" name="wp_private_settings_blocked_users\[\]" value="(\d+)"( checked=\'checked\')?/';
 
-		// Page 1: 50 checkboxes; the stored ID on page 5 and the ID of no user come back as hidden inputs.
-		$_GET = [];
-		$html = $this->page_html();
-		$this->assertSame( 50, preg_match_all( '/<input type="checkbox" name="wp_private_settings_blocked_users\[\]"/', $html ) );
-		$this->assertStringContainsString( 'name="wp_private_settings_blocked_users[]" value="' . $ids[240] . '"', $html );
-		$this->assertStringContainsString( 'type="hidden" name="wp_private_settings_blocked_users[]" value="' . $ids[240] . '"', $html );
-		$this->assertStringContainsString( 'type="hidden" name="wp_private_settings_blocked_users[]" value="987654"', $html );
-		$this->assertStringContainsString( 'page=wp-private', $html );
-		$this->assertStringContainsString( Users_Field::PAGE_ARG . '=2', $html, 'Paging links.' );
+		// Page 1: both real blocked users are ticked in the blocked section; the ID of no user is a hidden input.
+		$_GET                            = [];
+		$html                            = $this->page_html();
+		list( $blocked_html, $add_html ) = $this->sections( $html );
+		preg_match_all( $box, $blocked_html, $in_blocked, PREG_SET_ORDER );
+		$this->assertCount( 2, $in_blocked );
+		foreach ( $in_blocked as $match ) {
+			$this->assertArrayHasKey( 2, $match, 'Ticked.' );
+		}
+		$this->assertEqualsCanonicalizing( [ (string) $ids[240], (string) $ids[3] ], array_column( $in_blocked, 1 ) );
+		$this->assertStringContainsString( 'type="hidden" name="wp_private_settings_blocked_users[]" value="987654"', $blocked_html );
 
-		// The browser posts what the form holds: checked boxes and every hidden input.
+		preg_match_all( $box, $add_html, $results, PREG_SET_ORDER );
+		$this->assertCount( 50, $results );
+		foreach ( $results as $match ) {
+			$this->assertArrayNotHasKey( 2, $match, 'Unticked.' );
+			$this->assertNotContains( (int) $match[1], $blocked );
+		}
+		$this->assertStringContainsString( 'page=wp-private', $add_html );
+		$this->assertStringContainsString( Users_Field::PAGE_ARG . '=2', $add_html, 'Paging links.' );
+
+		// The browser posts what the form holds: ticked boxes and every hidden input.
 		preg_match_all( '/<input type="checkbox" name="wp_private_settings_blocked_users\[\]" value="(\d+)" checked=\'checked\'/', $html, $checked );
 		preg_match_all( '/type="hidden" name="wp_private_settings_blocked_users\[\]" value="(\d+)"/', $html, $hidden );
-		$posted = array_merge( $checked[1], $hidden[1] );
-		update_option( Settings::OPTION_BLOCKED_USERS, $posted );
+		update_option( Settings::OPTION_BLOCKED_USERS, array_merge( $checked[1], $hidden[1] ) );
 		$this->assertEqualsCanonicalizing( $blocked, get_option( Settings::OPTION_BLOCKED_USERS ), 'No stored ID is dropped.' );
 
-		// Page 5 shows user 240; a search finds one user.
-		$_GET = [ Users_Field::PAGE_ARG => '5' ];
-		$this->assertStringContainsString( 'name="wp_private_settings_blocked_users[]" value="' . $ids[240] . '" checked', $this->page_html() );
-		$_GET = [ Users_Field::SEARCH_ARG => 'wppuser120' ];
-		$html = $this->page_html();
-		$this->assertSame( 1, preg_match_all( '/<input type="checkbox" name="wp_private_settings_blocked_users\[\]"/', $html ) );
-		$this->assertStringContainsString( 'wppuser120', $html );
+		// A search finds one unticked user.
+		$_GET               = [ Users_Field::SEARCH_ARG => 'wppuser120' ];
+		list( , $add_html ) = $this->sections( $this->page_html() );
+		preg_match_all( $box, $add_html, $results, PREG_SET_ORDER );
+		$this->assertCount( 1, $results );
+		$this->assertArrayNotHasKey( 2, $results[0] );
+		$this->assertStringContainsString( 'wppuser120', $add_html );
+		$this->assertStringContainsString( 'Clear search', $add_html );
 
-		// Unchecking on the page that shows the user removes it.
-		$_GET = [ Users_Field::PAGE_ARG => '5' ];
+		// A blocked user is not offered as a result, but stays ticked in the blocked section.
+		$_GET                            = [ Users_Field::SEARCH_ARG => 'wppuser240' ];
+		list( $blocked_html, $add_html ) = $this->sections( $this->page_html() );
+		$this->assertSame( 0, preg_match_all( $box, $add_html ) );
+		$this->assertStringContainsString( 'value="' . $ids[240] . '" checked', $blocked_html );
+
+		// Unticking in the blocked section removes the user.
+		$_GET = [];
 		update_option( Settings::OPTION_BLOCKED_USERS, [ $ids[3], 987654 ] );
 		$this->assertNotContains( $ids[240], get_option( Settings::OPTION_BLOCKED_USERS ) );
+	}
+
+	/**
+	 * Two tabs, the quick-start card and the conditional rules.
+	 *
+	 * @return void
+	 */
+	public function test_page_has_tabs_quick_start_and_conditionals() {
+		$_GET = [];
+		$html = $this->page_html();
+		$this->assertStringContainsString( 'data-tab="visitors"', $html );
+		$this->assertStringContainsString( 'data-tab="blocked"', $html );
+		$this->assertStringContainsString( 'wp-private-quickstart', $html );
+		$this->assertStringContainsString( '[protected]Members-only content[/protected]', $html );
+		$this->assertStringContainsString( '[loginform]', $html );
+		foreach ( [ 'before_html', 'after_html', 'custom_login_page_url' ] as $name ) {
+			$this->assertMatchesRegularExpression( '/<div data-field-name="[^"]*' . $name . '"[^>]* data-conditional=/', $html, "$name is conditional." );
+		}
+		$this->assertDoesNotMatchRegularExpression( '/<div data-field-name="[^"]*type"[^>]* data-conditional=/', $html, 'The choice itself is always shown.' );
+	}
+
+	/**
+	 * The stylesheet and script load on this screen only.
+	 *
+	 * @return void
+	 */
+	public function test_assets_enqueue_only_on_the_settings_screen() {
+		wp_dequeue_style( 'wp-private-admin' );
+		wp_dequeue_script( 'wp-private-admin' );
+		Settings_Page::enqueue_assets( 'index.php' );
+		$this->assertFalse( wp_style_is( 'wp-private-admin', 'enqueued' ) );
+		$this->assertFalse( wp_script_is( 'wp-private-admin', 'enqueued' ) );
+
+		Settings_Page::enqueue_assets( 'settings_page_wp-private' );
+		$this->assertTrue( wp_style_is( 'wp-private-admin', 'enqueued' ) );
+		$this->assertTrue( wp_script_is( 'wp-private-admin', 'enqueued' ) );
+		wp_dequeue_style( 'wp-private-admin' );
+		wp_dequeue_script( 'wp-private-admin' );
+	}
+
+	/**
+	 * With nobody blocked the page says so.
+	 *
+	 * @return void
+	 */
+	public function test_empty_block_list_message() {
+		$_GET = [];
+		delete_option( Settings::OPTION_BLOCKED_USERS );
+		$html = $this->page_html();
+		$this->assertStringContainsString( 'Nobody is blocked. Every logged-in user can see protected content.', $html );
+		$this->assertStringContainsString( 'Add users', $html );
 	}
 
 	/**

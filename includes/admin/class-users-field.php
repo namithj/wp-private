@@ -17,9 +17,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Class Users_Field
  *
- * A user picker (fallback for WP-CMF-2): users in pages of 50 with a search box and a checkbox each. IDs on the
- * block list that are not on the current page (or no longer match a user) are posted back as hidden inputs, so that
- * saving never drops a stored ID (A-09). The stored value is an array of integers.
+ * A user picker (fallback for WP-CMF-2): every blocked user as a ticked checkbox, then a searchable list (pages of 50)
+ * of the users not yet blocked. IDs on the block list that no longer match a user are posted back as hidden inputs,
+ * so that saving never drops a stored ID (A-09). The stored value is an array of integers.
  */
 class Users_Field extends Abstract_Field {
 
@@ -69,6 +69,47 @@ class Users_Field extends Abstract_Field {
 		$search = isset( $_GET[ self::SEARCH_ARG ] ) && is_string( $_GET[ self::SEARCH_ARG ] ) ? sanitize_text_field( wp_unslash( $_GET[ self::SEARCH_ARG ] ) ) : '';
 		// phpcs:enable
 
+		$list_url = admin_url( 'options-general.php?page=' . Settings_Page::MENU_SLUG );
+
+		// Section A: every blocked user, ticked; unticking removes the user. IDs of no user stay as hidden inputs.
+		$blocked_users = [];
+		if ( ! empty( $blocked ) ) {
+			$blocked_users = get_users(
+				[
+					'include' => $blocked,
+					'orderby' => 'login',
+					'order'   => 'ASC',
+					'fields'  => [ 'ID', 'user_login', 'display_name' ],
+				]
+			);
+		}
+		$known  = [];
+		$output = $this->render_wrapper_start();
+
+		$output .= '<div class="wp-private-users-blocked"><h3>' . esc_html(
+			sprintf(
+				/* translators: %d: number of users on the block list. */
+				_n( '%d user is on the block list.', '%d users are on the block list.', count( $blocked ), 'wp-private' ),
+				count( $blocked )
+			)
+		) . '</h3>';
+		if ( empty( $blocked ) ) {
+			$output .= '<p>' . esc_html__( 'Nobody is blocked. Every logged-in user can see protected content.', 'wp-private' ) . '</p>';
+		} else {
+			$output .= '<fieldset><legend class="screen-reader-text">' . esc_html__( 'Users on the block list', 'wp-private' ) . '</legend>'
+				. $this->render_user_list( $blocked_users, true )
+				. '</fieldset>'
+				. '<p class="description">' . esc_html__( 'Untick a user to remove them from the list.', 'wp-private' ) . '</p>';
+			foreach ( $blocked_users as $user ) {
+				$known[] = (int) $user->ID;
+			}
+			foreach ( array_diff( $blocked, $known ) as $id ) {
+				$output .= '<input type="hidden" name="' . esc_attr( $this->name ) . '[]" value="' . esc_attr( (string) $id ) . '" />';
+			}
+		}
+		$output .= '</div>';
+
+		// Section B: users who are not blocked yet, searchable and paged.
 		$args = [
 			'number'      => self::PER_PAGE,
 			'paged'       => $paged,
@@ -77,6 +118,9 @@ class Users_Field extends Abstract_Field {
 			'count_total' => true,
 			'fields'      => [ 'ID', 'user_login', 'display_name' ],
 		];
+		if ( ! empty( $blocked ) ) {
+			$args['exclude'] = $blocked;
+		}
 		if ( '' !== $search ) {
 			$args['search']         = '*' . $search . '*';
 			$args['search_columns'] = [ 'user_login', 'user_email', 'user_nicename', 'display_name' ];
@@ -85,46 +129,33 @@ class Users_Field extends Abstract_Field {
 		$users = $query->get_results();
 		$pages = (int) ceil( $query->get_total() / self::PER_PAGE );
 
-		$shown  = [];
-		$output = $this->render_wrapper_start();
-
-		$output .= '<p class="description">' . esc_html(
-			sprintf(
-				/* translators: %d: number of users on the block list. */
-				_n( '%d user is on the block list.', '%d users are on the block list.', count( $blocked ), 'wp-private' ),
-				count( $blocked )
-			)
-		) . '</p>';
-
+		$output .= '<div class="wp-private-users-add"><h3>' . esc_html__( 'Add users', 'wp-private' ) . '</h3>';
 		$output .= '<p class="search-box">'
 			. '<label class="screen-reader-text" for="' . esc_attr( self::SEARCH_ARG ) . '">' . esc_html__( 'Search users', 'wp-private' ) . '</label>'
 			. '<input type="search" id="' . esc_attr( self::SEARCH_ARG ) . '" name="' . esc_attr( self::SEARCH_ARG ) . '" form="' . esc_attr( self::SEARCH_FORM ) . '" value="' . esc_attr( $search ) . '" /> '
 			. '<button type="submit" class="button" form="' . esc_attr( self::SEARCH_FORM ) . '">' . esc_html__( 'Search users', 'wp-private' ) . '</button>'
 			. '</p>';
-
-		$output .= '<fieldset><legend class="screen-reader-text">' . esc_html__( 'Users who cannot see protected content', 'wp-private' ) . '</legend>';
-		foreach ( $users as $user ) {
-			$id      = (int) $user->ID;
-			$shown[] = $id;
-			$output .= '<label style="display:block;margin:2px 0;"><input type="checkbox" name="' . esc_attr( $this->name ) . '[]" value="' . esc_attr( (string) $id ) . '"' . checked( in_array( $id, $blocked, true ), true, false ) . ' /> '
-				. esc_html( $user->user_login );
-			if ( '' !== $user->display_name && $user->display_name !== $user->user_login ) {
-				$output .= ' <span class="description">' . esc_html( $user->display_name ) . '</span>';
-			}
-			$output .= '</label>';
+		if ( '' !== $search ) {
+			$output .= '<p>' . esc_html(
+				sprintf(
+					/* translators: %s: the search term. */
+					__( 'Results for “%s”.', 'wp-private' ),
+					$search
+				)
+			) . ' <a href="' . esc_url( $list_url ) . '">' . esc_html__( 'Clear search', 'wp-private' ) . '</a></p>';
 		}
+
 		if ( empty( $users ) ) {
-			$output .= '<p>' . esc_html__( 'No users found.', 'wp-private' ) . '</p>';
-		}
-		$output .= '</fieldset>';
-
-		// Every stored ID that is not shown on this page is sent back unchanged.
-		foreach ( array_diff( $blocked, $shown ) as $id ) {
-			$output .= '<input type="hidden" name="' . esc_attr( $this->name ) . '[]" value="' . esc_attr( (string) $id ) . '" />';
+			$none    = '' === $search && ! empty( $blocked ) ? __( 'Every user is already on the block list.', 'wp-private' ) : __( 'No users found.', 'wp-private' );
+			$output .= '<p>' . esc_html( $none ) . '</p>';
+		} else {
+			$output .= '<fieldset><legend class="screen-reader-text">' . esc_html__( 'Users you can add to the block list', 'wp-private' ) . '</legend>'
+				. $this->render_user_list( $users, false )
+				. '</fieldset>';
 		}
 
 		if ( $pages > 1 ) {
-			$base    = add_query_arg( self::SEARCH_ARG, rawurlencode( $search ), admin_url( 'options-general.php?page=' . Settings_Page::MENU_SLUG ) );
+			$base    = add_query_arg( self::SEARCH_ARG, rawurlencode( $search ), $list_url );
 			$output .= '<div class="tablenav"><div class="tablenav-pages">' . wp_kses_post(
 				(string) paginate_links(
 					[
@@ -137,14 +168,35 @@ class Users_Field extends Abstract_Field {
 					]
 				)
 			) . '</div></div>';
-			$output .= '<p class="description">' . esc_html__( 'Changes made on this page are saved with the Save button; changes on other pages are lost when you switch pages without saving.', 'wp-private' ) . '</p>';
+			$output .= '<p class="description">' . esc_html__( 'Save before moving to another page, or the ticks on this page are lost.', 'wp-private' ) . '</p>';
 		}
+		$output .= '</div>';
 
 		$output .= $this->render_description() . $this->render_wrapper_end();
 
 		add_action( 'admin_footer', [ self::class, 'print_search_form' ] );
 
 		return $output;
+	}
+
+	/**
+	 * A list of user checkboxes.
+	 *
+	 * @param array<int, object> $users   Users (ID, user_login, display_name).
+	 * @param bool               $checked Whether the boxes start ticked.
+	 * @return string HTML.
+	 */
+	private function render_user_list( array $users, $checked ) {
+		$output = '<ul class="wp-private-user-list">';
+		foreach ( $users as $user ) {
+			$output .= '<li><label><input type="checkbox" name="' . esc_attr( $this->name ) . '[]" value="' . esc_attr( (string) (int) $user->ID ) . '"' . checked( $checked, true, false ) . ' /> '
+				. esc_html( $user->user_login );
+			if ( '' !== $user->display_name && $user->display_name !== $user->user_login ) {
+				$output .= ' <span class="description">' . esc_html( $user->display_name ) . '</span>';
+			}
+			$output .= '</label></li>';
+		}
+		return $output . '</ul>';
 	}
 
 	/**

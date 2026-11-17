@@ -67,6 +67,7 @@ class Shortcodes {
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only: only decides where to go after logging in.
 		$redirect = isset( $_GET['redirect'] ) && is_string( $_GET['redirect'] ) ? esc_url_raw( wp_unslash( $_GET['redirect'] ) ) : '';
 
+		Prompt::enqueue_style();
 		return Prompt::login_form( '' !== $redirect ? wp_validate_redirect( $redirect, $here ) : $here );
 	}
 }

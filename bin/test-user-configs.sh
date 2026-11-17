@@ -12,8 +12,8 @@
 # loads. Choose another version with WP_CORE_VERSION and another PHP binary with PHP. The database
 # comes from the WP_TESTS_DB_* variables (defaults in tests/phpunit/wp-tests-config.php).
 #
-# Config 09 (multisite) runs with WP_TESTS_MULTISITE=1. Config 10 also loads the sibling SwiftForms
-# plugin (WPP_LOAD_SWIFTFORMS=1).
+# Config 09 (multisite) runs with WP_TESTS_MULTISITE=1. Config 10 also loads the test-only fixture
+# plugin tests/fixtures/coexist-plugin (WPP_LOAD_COEXIST_PLUGIN=1).
 
 set -uo pipefail
 
@@ -40,7 +40,7 @@ PHPUNIT=("${PHP}" vendor/phpunit/phpunit/phpunit --bootstrap tests/phpunit/boots
 # The first PHPUnit process installs the test tables; the rest reuse them.
 unset WP_TESTS_SKIP_INSTALL
 unset WP_TESTS_MULTISITE
-unset WPP_LOAD_SWIFTFORMS
+unset WPP_LOAD_COEXIST_PLUGIN
 unset WPP_PLUGIN_FILE
 
 slugs=()
@@ -77,7 +77,7 @@ for slug in "${slugs[@]}"; do
 	fi
 	env_args=()
 	[[ "${mode}" == "multi" ]] && env_args+=(WP_TESTS_MULTISITE=1)
-	[[ "${slug}" == 10-* ]] && env_args+=(WPP_LOAD_SWIFTFORMS=1)
+	[[ "${slug}" == 10-* ]] && env_args+=(WPP_LOAD_COEXIST_PLUGIN=1)
 	out="$(env "${env_args[@]}" "${PHPUNIT[@]}" --filter "/::test_user_config with data set \"${slug}\"\$/" 2>&1)"
 	status=$?
 	export WP_TESTS_SKIP_INSTALL=1

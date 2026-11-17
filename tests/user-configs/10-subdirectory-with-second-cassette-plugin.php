@@ -2,14 +2,14 @@
 /**
  * Config 10.
  *
- * WordPress in a subdirectory (home and siteurl http://example.org/blog), SwiftForms active with its own bundled cassette libraries (A-05; coexistence).
+ * WordPress in a subdirectory (home and siteurl http://example.org/blog), a second plugin active that bundles the same libraries unprefixed (test fixture; coexistence).
  *
  * @package WpPrivate
  */
 
 return [
-	'slug'        => '10-subdirectory-with-swiftforms',
-	'title'       => 'Subdirectory install, SwiftForms active',
+	'slug'        => '10-subdirectory-with-second-cassette-plugin',
+	'title'       => 'Subdirectory install, second cassette plugin active',
 	'version'     => '1.6.1',
 	'site'        => [
 		'theme'      => 'wpp-test-block',
@@ -51,5 +51,5 @@ return [
 	'markers'     => [ 'WPPMARK-10-A' ],
 	'search_word' => 'quillfeather10',
 	'blocked'     => 'blocked',
-	'swiftforms'  => true,
+	'coexist'     => true,
 ];

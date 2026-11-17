@@ -12,7 +12,7 @@
  * subsite, subdirectory), users (key => role), options (name => raw value; "{user:key}" in a
  * string becomes that user's ID), posts (key, title, content, type, status, slug, date), main (the
  * gated post key), plain (a post without a gate), markers, search_word, viewer, blocked, admin,
- * skip (scenario ids), swiftforms (true: config 10 loads SwiftForms too).
+ * skip (scenario ids), coexist (true: config 10 loads the fixture plugin too).
  *
  * @package WpPrivate
  */
@@ -133,7 +133,7 @@ class WPP_User_Config_Loader {
 			'blocked'     => '',
 			'admin'       => 'admin',
 			'skip'        => [],
-			'swiftforms'  => false,
+			'coexist'     => false,
 		];
 		$config['site'] += [
 			'theme'      => 'wpp-test-block',

@@ -43,7 +43,7 @@ trap 'rm -rf "${WPP_UPGRADE_OUT}"' EXIT
 LEGACY="${PWD}/tests/fixtures/legacy"
 PHPUNIT=("${PHP}" vendor/phpunit/phpunit/phpunit --bootstrap tests/phpunit/bootstrap-user-configs.php --group upgrade-path --colors=never)
 
-unset WP_TESTS_MULTISITE WPP_LOAD_SWIFTFORMS
+unset WP_TESTS_MULTISITE WPP_LOAD_COEXIST_PLUGIN
 unset WP_TESTS_SKIP_INSTALL # The first process installs the tables.
 
 failed=0
