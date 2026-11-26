@@ -59,6 +59,10 @@ class WPP_Normaliser {
 			$html
 		);
 
+		// WordPress 7.3 trunk stopped leaving a trailing space in the text of a post-excerpt block ("text </p>" is now
+		// "text</p>"). Core markup, not plugin output: both forms are written the way the frozen baseline has it.
+		$html = preg_replace( '#(wp-block-post-excerpt__excerpt">[^<]*?)\s*</p>#', '$1 </p>', $html );
+
 		$html = preg_replace( '#(https://wordpress\.org/\?v=)[0-9][0-9a-zA-Z.-]*#', '$1{WP}', $html );
 
 		$html = preg_replace( '/ id="wp--skip-link--target"/', '', $html );

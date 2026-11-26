@@ -8,5 +8,5 @@ wp_private_settings_custom_login_page_url: stored -> unchanged
 
 === administrator without unfiltered_html saves a <script> ===
 unfiltered_html: no
-stored: <p>ok</p>alert(1)
+stored: <p>ok</p>
 

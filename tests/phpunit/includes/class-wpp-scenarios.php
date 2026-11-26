@@ -897,7 +897,8 @@ class WPP_Scenarios {
 		$stored = get_option( WpPrivate\Settings::OPTION_BEFORE_HTML );
 		$this->expect( ! $can, 'S10: this administrator unexpectedly has unfiltered_html.' );
 		$this->expect( false === strpos( (string) $stored, '<script' ), 'S10: a <script> was stored by an administrator without unfiltered_html.' );
-		$this->section( 'S10', 'administrator without unfiltered_html saves a <script>', 'unfiltered_html: no' . "\nstored: " . $stored );
+		// WordPress 7.3 trunk also drops the script's text; older cores leave "alert(1)" behind. Only the markup is the plugin's concern.
+		$this->section( 'S10', 'administrator without unfiltered_html saves a <script>', 'unfiltered_html: no' . "\nstored: " . str_replace( 'alert(1)', '', (string) $stored ) );
 	}
 
 	/**
