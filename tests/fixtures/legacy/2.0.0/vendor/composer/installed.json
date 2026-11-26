@@ -1,0 +1,122 @@
+{
+    "packages": [
+        {
+            "name": "pedalcms/cassette-cmf",
+            "version": "0.2.1",
+            "version_normalized": "0.2.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/PedalCMS/cassette-cmf.git",
+                "reference": "f808f8f5150b1961b7414d20b632996d2b118a43"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/PedalCMS/cassette-cmf/zipball/f808f8f5150b1961b7414d20b632996d2b118a43",
+                "reference": "f808f8f5150b1961b7414d20b632996d2b118a43",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.4"
+            },
+            "require-dev": {
+                "dealerdirect/phpcodesniffer-composer-installer": "^1.1",
+                "php-stubs/wordpress-stubs": "^6.7",
+                "phpcompatibility/phpcompatibility-wp": "^2.1",
+                "phpstan/extension-installer": "^1.4",
+                "phpstan/phpstan": "^2.1",
+                "phpunit/phpunit": "^9.6.23",
+                "squizlabs/php_codesniffer": "^3.13.0",
+                "szepeviktor/phpstan-wordpress": "^2.0",
+                "wp-cli/wp-cli-bundle": "^2.12",
+                "wp-coding-standards/wpcs": "^3.2",
+                "wp-phpunit/wp-phpunit": "^6.8",
+                "yoast/phpunit-polyfills": "^3.1"
+            },
+            "time": "2026-11-01T18:39:00+00:00",
+            "type": "library",
+            "installation-source": "dist",
+            "autoload": {
+                "classmap": [
+                    "src/"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "GPL-2.0-or-later"
+            ],
+            "authors": [
+                {
+                    "name": "PedalCMS"
+                }
+            ],
+            "description": "WP Content Modeling Framework",
+            "support": {
+                "issues": "https://github.com/PedalCMS/cassette-cmf/issues",
+                "source": "https://github.com/PedalCMS/cassette-cmf/tree/v0.2.1"
+            },
+            "install-path": "../pedalcms/cassette-cmf"
+        },
+        {
+            "name": "pedalcms/cassette-cmf-block-builder",
+            "version": "v0.2.0",
+            "version_normalized": "0.2.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/PedalCMS/cassette-cmf-block-builder.git",
+                "reference": "d47e6fc920c411868ea9947d33f7ffe6cf7aa429"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/PedalCMS/cassette-cmf-block-builder/zipball/d47e6fc920c411868ea9947d33f7ffe6cf7aa429",
+                "reference": "d47e6fc920c411868ea9947d33f7ffe6cf7aa429",
+                "shasum": ""
+            },
+            "require": {
+                "pedalcms/cassette-cmf": "^0.2.0",
+                "php": ">=7.4"
+            },
+            "require-dev": {
+                "dealerdirect/phpcodesniffer-composer-installer": "^1.1",
+                "php-stubs/wordpress-stubs": "^6.8",
+                "phpcompatibility/phpcompatibility-wp": "^2.1",
+                "phpstan/extension-installer": "^1.4",
+                "phpstan/phpstan": "^2.1",
+                "phpunit/phpunit": "^9.6.23",
+                "squizlabs/php_codesniffer": "^3.13.0",
+                "szepeviktor/phpstan-wordpress": "^2.0",
+                "wp-cli/wp-cli-bundle": "^2.12",
+                "wp-coding-standards/wpcs": "^3.2",
+                "wp-phpunit/wp-phpunit": "^6.8",
+                "yoast/phpunit-polyfills": "^3.1"
+            },
+            "time": "2026-11-01T18:58:19+00:00",
+            "type": "library",
+            "installation-source": "dist",
+            "autoload": {
+                "classmap": [
+                    "src/"
+                ],
+                "exclude-from-classmap": [
+                    "src/assets/"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "GPL-2.0-or-later"
+            ],
+            "authors": [
+                {
+                    "name": "PedalCMS"
+                }
+            ],
+            "description": "Declarative Gutenberg blocks for Cassette-CMF",
+            "support": {
+                "issues": "https://github.com/PedalCMS/cassette-cmf-block-builder/issues",
+                "source": "https://github.com/PedalCMS/cassette-cmf-block-builder/tree/v0.2.0"
+            },
+            "install-path": "../pedalcms/cassette-cmf-block-builder"
+        }
+    ],
+    "dev": false,
+    "dev-package-names": []
+}

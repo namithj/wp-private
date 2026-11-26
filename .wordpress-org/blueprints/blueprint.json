@@ -3,12 +3,12 @@
   "meta": {
     "title": "WP Private demo",
     "author": "namithj",
-    "description": "A post with a members-only part, viewed logged out: the login form appears where the hidden text was.",
+    "description": "Opens on the WP Private settings page. A demo post with a members-only part (/?p=100) shows what visitors see.",
     "categories": [
       "Content"
     ]
   },
-  "landingPage": "/?p=100",
+  "landingPage": "/wp-admin/options-general.php?page=wp-private",
   "preferredVersions": {
     "php": "8.3",
     "wp": "latest"

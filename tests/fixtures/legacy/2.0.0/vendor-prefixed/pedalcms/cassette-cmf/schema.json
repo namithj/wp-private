@@ -1,0 +1,964 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Cassette-CMF Configuration Schema",
+  "description": "JSON schema for Cassette-CMF custom post types, settings pages, and field definitions",
+  "type": "object",
+  "properties": {
+    "cpts": {
+      "type": "array",
+      "description": "Array of custom post type definitions",
+      "items": {
+        "$ref": "#/definitions/customPostType"
+      }
+    },
+    "taxonomies": {
+      "type": "array",
+      "description": "Array of taxonomy definitions",
+      "items": {
+        "$ref": "#/definitions/taxonomy"
+      }
+    },
+    "settings_pages": {
+      "type": "array",
+      "description": "Array of settings page definitions",
+      "items": {
+        "$ref": "#/definitions/settingsPage"
+      }
+    }
+  },
+  "additionalProperties": false,
+  "definitions": {
+    "customPostType": {
+      "type": "object",
+      "required": [
+        "id"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Post type identifier (max 20 characters, lowercase, underscores)",
+          "pattern": "^[a-z_]{1,20}$",
+          "minLength": 1,
+          "maxLength": 20,
+          "examples": [
+            "book",
+            "product",
+            "event",
+            "portfolio"
+          ]
+        },
+        "args": {
+          "type": "object",
+          "description": "WordPress register_post_type() arguments",
+          "additionalProperties": true,
+          "properties": {
+            "label": {
+              "type": "string",
+              "description": "Plural name for the post type",
+              "minLength": 1
+            },
+            "labels": {
+              "$ref": "#/definitions/postTypeLabels"
+            },
+            "description": {
+              "type": "string",
+              "description": "Short descriptive summary",
+              "maxLength": 255
+            },
+            "public": {
+              "type": "boolean",
+              "description": "Whether the post type is public",
+              "default": true
+            },
+            "hierarchical": {
+              "type": "boolean",
+              "description": "Whether the post type is hierarchical (like pages)",
+              "default": false
+            },
+            "supports": {
+              "type": "array",
+              "description": "Features this post type supports",
+              "uniqueItems": true,
+              "items": {
+                "type": "string",
+                "enum": [
+                  "title",
+                  "editor",
+                  "author",
+                  "thumbnail",
+                  "excerpt",
+                  "trackbacks",
+                  "custom-fields",
+                  "comments",
+                  "revisions",
+                  "page-attributes",
+                  "post-formats"
+                ]
+              }
+            },
+            "menu_icon": {
+              "type": "string",
+              "description": "Dashicon class (dashicons-*) or URL for menu icon",
+              "examples": [
+                "dashicons-book",
+                "dashicons-cart",
+                "dashicons-admin-home"
+              ]
+            },
+            "menu_position": {
+              "type": "integer",
+              "description": "Position in admin menu (5-100)",
+              "minimum": 5,
+              "maximum": 100
+            },
+            "show_in_rest": {
+              "type": "boolean",
+              "description": "Enable REST API and Gutenberg editor support",
+              "default": false
+            },
+            "rest_base": {
+              "type": "string",
+              "description": "Custom REST API base path",
+              "pattern": "^[a-z0-9_-]+$"
+            },
+            "capability_type": {
+              "oneOf": [
+                {
+                  "type": "string",
+                  "description": "Capability type (singular)",
+                  "examples": [
+                    "post",
+                    "page"
+                  ]
+                },
+                {
+                  "type": "array",
+                  "description": "Capability type (singular, plural)",
+                  "items": {
+                    "type": "string"
+                  },
+                  "minItems": 2,
+                  "maxItems": 2
+                }
+              ]
+            },
+            "rewrite": {
+              "oneOf": [
+                {
+                  "type": "boolean",
+                  "description": "Enable/disable rewrite"
+                },
+                {
+                  "type": "object",
+                  "description": "Rewrite configuration",
+                  "properties": {
+                    "slug": {
+                      "type": "string",
+                      "description": "Custom URL slug",
+                      "pattern": "^[a-z0-9_-]+$"
+                    },
+                    "with_front": {
+                      "type": "boolean",
+                      "description": "Prepend front base to permalink",
+                      "default": true
+                    },
+                    "feeds": {
+                      "type": "boolean",
+                      "description": "Build feed permastruct"
+                    },
+                    "pages": {
+                      "type": "boolean",
+                      "description": "Build page permastruct"
+                    }
+                  },
+                  "additionalProperties": false
+                }
+              ]
+            },
+            "has_archive": {
+              "oneOf": [
+                {
+                  "type": "boolean",
+                  "description": "Enable archive page"
+                },
+                {
+                  "type": "string",
+                  "description": "Custom archive slug"
+                }
+              ]
+            },
+            "exclude_from_search": {
+              "type": "boolean",
+              "description": "Exclude from search results",
+              "default": false
+            },
+            "publicly_queryable": {
+              "type": "boolean",
+              "description": "Whether queries can be performed on the front end"
+            },
+            "show_ui": {
+              "type": "boolean",
+              "description": "Show admin UI",
+              "default": true
+            },
+            "show_in_menu": {
+              "oneOf": [
+                {
+                  "type": "boolean",
+                  "description": "Show in admin menu"
+                },
+                {
+                  "type": "string",
+                  "description": "Show as submenu under parent page"
+                }
+              ]
+            },
+            "show_in_nav_menus": {
+              "type": "boolean",
+              "description": "Make available for selection in navigation menus"
+            },
+            "show_in_admin_bar": {
+              "type": "boolean",
+              "description": "Show in admin bar"
+            }
+          }
+        },
+        "fields": {
+          "type": "array",
+          "description": "Array of field definitions for this post type",
+          "items": {
+            "$ref": "#/definitions/field"
+          }
+        }
+      }
+    },
+    "postTypeLabels": {
+      "type": "object",
+      "description": "Custom labels for post type",
+      "additionalProperties": true,
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "General name (plural)"
+        },
+        "singular_name": {
+          "type": "string",
+          "description": "Singular name"
+        },
+        "add_new": {
+          "type": "string",
+          "description": "Add new label"
+        },
+        "add_new_item": {
+          "type": "string",
+          "description": "Add new item label"
+        },
+        "edit_item": {
+          "type": "string",
+          "description": "Edit item label"
+        },
+        "new_item": {
+          "type": "string",
+          "description": "New item label"
+        },
+        "view_item": {
+          "type": "string",
+          "description": "View item label"
+        },
+        "search_items": {
+          "type": "string",
+          "description": "Search items label"
+        },
+        "not_found": {
+          "type": "string",
+          "description": "Not found message"
+        },
+        "not_found_in_trash": {
+          "type": "string",
+          "description": "Not found in trash message"
+        },
+        "all_items": {
+          "type": "string",
+          "description": "All items label"
+        },
+        "menu_name": {
+          "type": "string",
+          "description": "Menu name"
+        }
+      }
+    },
+    "settingsPage": {
+      "type": "object",
+      "required": [
+        "id"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the settings page",
+          "pattern": "^[a-z0-9_-]+$",
+          "minLength": 1,
+          "maxLength": 100,
+          "examples": [
+            "my-plugin-settings",
+            "theme-options",
+            "site-config"
+          ]
+        },
+        "page_title": {
+          "type": "string",
+          "description": "Title shown in browser tab",
+          "minLength": 1,
+          "maxLength": 100
+        },
+        "menu_title": {
+          "type": "string",
+          "description": "Text to be used for the menu",
+          "minLength": 1,
+          "maxLength": 50
+        },
+        "capability": {
+          "type": "string",
+          "description": "Capability required to access the page",
+          "default": "manage_options",
+          "enum": [
+            "manage_options",
+            "edit_posts",
+            "edit_pages",
+            "edit_published_posts",
+            "publish_posts",
+            "manage_categories",
+            "moderate_comments",
+            "upload_files",
+            "edit_theme_options",
+            "administrator"
+          ]
+        },
+        "menu_slug": {
+          "type": "string",
+          "description": "Menu slug (defaults to id). Preferred name; \"slug\" is accepted as an alias.",
+          "pattern": "^[a-z0-9_-]+$"
+        },
+        "slug": {
+          "type": "string",
+          "description": "Alias of \"menu_slug\". If both are given, \"menu_slug\" wins.",
+          "pattern": "^[a-z0-9_-]+$"
+        },
+        "parent_slug": {
+          "type": "string",
+          "description": "Parent menu slug for submenu pages. Preferred name; \"parent\" is accepted as an alias."
+        },
+        "parent": {
+          "type": "string",
+          "description": "Alias of \"parent_slug\". If both are given, \"parent_slug\" wins. Parent menu slug for submenu pages",
+          "enum": [
+            "options-general.php",
+            "themes.php",
+            "plugins.php",
+            "users.php",
+            "tools.php",
+            "settings.php",
+            "edit.php",
+            "upload.php",
+            "index.php",
+            "edit-comments.php"
+          ]
+        },
+        "icon_url": {
+          "type": "string",
+          "description": "Dashicon class or icon URL for a top-level menu. Preferred name; \"icon\" is accepted as an alias.",
+          "pattern": "^(dashicons-|data:image/svg\\+xml;base64,)"
+        },
+        "icon": {
+          "type": "string",
+          "description": "Alias of \"icon_url\". If both are given, \"icon_url\" wins. Dashicon class for top-level menu",
+          "pattern": "^(dashicons-|data:image/svg\\+xml;base64,)",
+          "examples": [
+            "dashicons-admin-settings",
+            "dashicons-admin-generic"
+          ]
+        },
+        "position": {
+          "type": "integer",
+          "description": "Menu position, for both top-level and sub-menu pages (1-100)",
+          "minimum": 1,
+          "maximum": 100
+        },
+        "show_in_rest": {
+          "type": "boolean",
+          "description": "Opt in to the Cassette-CMF REST route for this page ({namespace}/settings/{id}). Default false: no route, no change.",
+          "default": false
+        },
+        "render_mode": {
+          "type": "string",
+          "description": "How the page is drawn: 'classic' (default, the WordPress form) or 'react' (the @wordpress/components app; implies show_in_rest). Any other value is reported with _doing_it_wrong() and the classic renderer is used, so it is deliberately not an enum.",
+          "default": "classic",
+          "examples": [
+            "classic",
+            "react"
+          ]
+        },
+        "description": {
+          "type": "string",
+          "description": "Introductory text shown under the page title by the React renderer."
+        },
+        "schema_version": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Version of this page's stored data. Used with the PHP-only 'upgrade' callback; in JSON it only records the version."
+        },
+        "fields": {
+          "type": "array",
+          "description": "Array of field definitions for this settings page",
+          "items": {
+            "$ref": "#/definitions/field"
+          }
+        }
+      }
+    },
+    "field": {
+      "type": "object",
+      "required": [
+        "name",
+        "type"
+      ],
+      "allOf": [
+        {
+          "$ref": "#/definitions/baseField"
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "select"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "options"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "enum": [
+                  "radio",
+                  "checkbox"
+                ]
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "options"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "tabs"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "tabs"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "enum": [
+                  "metabox",
+                  "group",
+                  "repeater"
+                ]
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "fields"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "custom_html"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "content"
+            ]
+          }
+        }
+      ]
+    },
+    "baseField": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Field identifier (used as meta key or option name)",
+          "pattern": "^[a-z_][a-z0-9_]*$",
+          "minLength": 1,
+          "maxLength": 64,
+          "examples": [
+            "site_title",
+            "user_email",
+            "product_price"
+          ]
+        },
+        "type": {
+          "type": "string",
+          "description": "Field type",
+          "enum": [
+            "text",
+            "textarea",
+            "select",
+            "checkbox",
+            "radio",
+            "number",
+            "email",
+            "url",
+            "date",
+            "password",
+            "color",
+            "wysiwyg",
+            "tabs",
+            "metabox",
+            "group",
+            "repeater",
+            "custom_html",
+            "upload",
+            "secret"
+          ]
+        },
+        "label": {
+          "type": "string",
+          "description": "Field label shown to users",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        "description": {
+          "type": "string",
+          "description": "Help text displayed below the field",
+          "maxLength": 500
+        },
+        "default": {
+          "description": "Default value for the field (type varies by field type)"
+        },
+        "required": {
+          "type": "boolean",
+          "description": "Whether the field is required",
+          "default": false
+        },
+        "show_in_rest": {
+          "type": "boolean",
+          "description": "Settings-page fields only. False omits the field from the REST schema and values and makes it non-writable over REST; it still renders and saves in the classic renderer.",
+          "default": true
+        },
+        "bindings": {
+          "description": "Optional boolean. Only true counts: marks the field as exposable to companion libraries (e.g. a block-bindings source). Ignored by Cassette-CMF itself; never applies to password or secret fields. Not type-restricted here so existing configs stay valid."
+        },
+        "conditional": {
+          "type": "object",
+          "description": "Conditional visibility rules for the field",
+          "properties": {
+            "relation": {
+              "type": "string",
+              "enum": [
+                "AND",
+                "OR"
+              ],
+              "default": "AND"
+            },
+            "rules": {
+              "type": "array",
+              "description": "Conditional rules that control field visibility",
+              "minItems": 1,
+              "items": {
+                "type": "object",
+                "properties": {
+                  "field": {
+                    "type": "string",
+                    "description": "Controlling field name"
+                  },
+                  "operator": {
+                    "type": "string",
+                    "enum": [
+                      "==",
+                      "!=",
+                      ">",
+                      ">=",
+                      "<",
+                      "<=",
+                      "in",
+                      "not_in",
+                      "empty",
+                      "not_empty"
+                    ]
+                  },
+                  "value": {
+                    "description": "Comparison value or values"
+                  },
+                  "values": {
+                    "type": "array",
+                    "description": "Comparison values for in/not_in operators"
+                  }
+                },
+                "required": [
+                  "field"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          "required": [
+            "rules"
+          ],
+          "additionalProperties": false
+        },
+        "placeholder": {
+          "type": "string",
+          "description": "Placeholder text for text-based inputs",
+          "maxLength": 200
+        },
+        "min": {
+          "description": "Minimum value (for number/date fields) or length (for text fields)"
+        },
+        "max": {
+          "description": "Maximum value (for number/date fields) or length (for text fields)"
+        },
+        "step": {
+          "type": [
+            "integer",
+            "number"
+          ],
+          "description": "Step increment for number fields",
+          "exclusiveMinimum": 0
+        },
+        "pattern": {
+          "type": "string",
+          "description": "Regular expression pattern for validation (without delimiters)",
+          "examples": [
+            "[0-9]{5}",
+            "[A-Z]{2}[0-9]{4}"
+          ]
+        },
+        "options": {
+          "type": "object",
+          "description": "Options for select, radio, and checkbox fields (key: value pairs)",
+          "minProperties": 1,
+          "additionalProperties": {
+            "type": "string"
+          },
+          "examples": [
+            {
+              "option1": "Label 1",
+              "option2": "Label 2"
+            }
+          ]
+        },
+        "multiple": {
+          "type": "boolean",
+          "description": "Allow multiple selections (for select and checkbox)",
+          "default": false
+        },
+        "inline": {
+          "type": "boolean",
+          "description": "Display options inline (for radio and checkbox)",
+          "default": false
+        },
+        "rows": {
+          "type": "integer",
+          "description": "Number of rows for textarea",
+          "minimum": 1,
+          "maximum": 50,
+          "default": 5
+        },
+        "cols": {
+          "type": "integer",
+          "description": "Number of columns for textarea",
+          "minimum": 10,
+          "maximum": 200,
+          "default": 50
+        },
+        "maxlength": {
+          "type": "integer",
+          "description": "Maximum length for text-based fields",
+          "minimum": 1,
+          "maximum": 65535
+        },
+        "allow_html": {
+          "type": "boolean",
+          "description": "For textarea fields, allow safe HTML (sanitized with wp_kses_post) instead of stripping all tags",
+          "default": false
+        },
+        "prepend": {
+          "type": "string",
+          "description": "Content to display before the input (text and number fields). May include limited HTML, sanitized with wp_kses_post."
+        },
+        "append": {
+          "type": "string",
+          "description": "Content to display after the input (text and number fields). May include limited HTML, sanitized with wp_kses_post."
+        },
+        "readonly": {
+          "type": "boolean",
+          "description": "Make field read-only",
+          "default": false
+        },
+        "disabled": {
+          "type": "boolean",
+          "description": "Disable the field",
+          "default": false
+        },
+        "class": {
+          "type": "string",
+          "description": "Additional CSS classes (space-separated)",
+          "pattern": "^[a-zA-Z0-9_-]+(\\s+[a-zA-Z0-9_-]+)*$"
+        },
+        "wrapper_class": {
+          "type": "string",
+          "description": "CSS classes for field wrapper (space-separated)",
+          "pattern": "^[a-zA-Z0-9_-]+(\\s+[a-zA-Z0-9_-]+)*$"
+        },
+        "context": {
+          "type": "string",
+          "description": "Metabox context for CPT fields",
+          "enum": [
+            "normal",
+            "side",
+            "advanced"
+          ],
+          "default": "normal"
+        },
+        "priority": {
+          "type": "string",
+          "description": "Metabox priority for CPT fields",
+          "enum": [
+            "high",
+            "default",
+            "low"
+          ],
+          "default": "default"
+        },
+        "sanitize_callback": {
+          "type": "string",
+          "description": "Custom sanitization callback function name"
+        },
+        "validation": {
+          "type": "object",
+          "description": "Validation rules",
+          "properties": {
+            "min_length": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "max_length": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "regex": {
+              "type": "string"
+            },
+            "custom_callback": {
+              "type": "string"
+            }
+          }
+        },
+        "tabs": {
+          "type": "array",
+          "description": "Tab definitions for tabs field type",
+          "items": {
+            "$ref": "#/definitions/tabDefinition"
+          },
+          "minItems": 1
+        },
+        "orientation": {
+          "type": "string",
+          "description": "Tab orientation (horizontal or vertical)",
+          "enum": [
+            "horizontal",
+            "vertical"
+          ],
+          "default": "horizontal"
+        },
+        "fields": {
+          "type": "array",
+          "description": "Nested field definitions for container fields (metabox, group, repeater)",
+          "items": {
+            "$ref": "#/definitions/field"
+          }
+        },
+        "button_label": {
+          "type": "string",
+          "description": "Label for add button in repeater fields",
+          "default": "Add Item"
+        },
+        "row_label": {
+          "type": "string",
+          "description": "Label template for repeater rows (use {{index}} for row number)",
+          "default": "Item {{index}}"
+        },
+        "row_label_field": {
+          "type": "string",
+          "description": "Name of a sub-field whose value is used as the row's collapsed label instead of row_label, once that sub-field is non-empty. Must reference a sub-field with a single text-like control (text, textarea, number, email, url, date, select)."
+        },
+        "min_rows": {
+          "type": "integer",
+          "description": "Minimum number of rows in repeater",
+          "minimum": 0,
+          "default": 0
+        },
+        "max_rows": {
+          "type": "integer",
+          "description": "Maximum number of rows in repeater",
+          "minimum": 1
+        },
+        "content": {
+          "type": "string",
+          "description": "HTML content to display (for custom_html field type)"
+        },
+        "allowed_tags": {
+          "type": "object",
+          "description": "Allowed HTML tags for wp_kses sanitization (for custom_html field type)",
+          "additionalProperties": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "boolean"
+            }
+          }
+        },
+        "raw_html": {
+          "type": "boolean",
+          "description": "Output HTML without sanitization (for custom_html field type, use with caution)",
+          "default": false
+        },
+        "button_text": {
+          "type": "string",
+          "description": "Text for the upload button (for upload field type)",
+          "default": "Select File"
+        },
+        "remove_text": {
+          "type": "string",
+          "description": "Text for the remove button (for upload field type)",
+          "default": "Remove"
+        },
+        "library_type": {
+          "type": "string",
+          "description": "Filter media library by type (for upload field type)",
+          "enum": [
+            "",
+            "image",
+            "video",
+            "audio",
+            "application"
+          ]
+        },
+        "preview": {
+          "type": "boolean",
+          "description": "Show preview for images (for upload field type)",
+          "default": true
+        }
+      }
+    },
+    "tabDefinition": {
+      "type": "object",
+      "required": [
+        "id",
+        "label"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique tab identifier",
+          "pattern": "^[a-z_][a-z0-9_]*$",
+          "minLength": 1,
+          "maxLength": 64
+        },
+        "label": {
+          "type": "string",
+          "description": "Tab label shown to users",
+          "minLength": 1,
+          "maxLength": 100
+        },
+        "icon": {
+          "type": "string",
+          "description": "Dashicon class for the tab",
+          "pattern": "^dashicons-",
+          "examples": [
+            "dashicons-admin-settings",
+            "dashicons-edit"
+          ]
+        },
+        "description": {
+          "type": "string",
+          "description": "Optional description shown in tab content",
+          "maxLength": 255
+        },
+        "fields": {
+          "type": "array",
+          "description": "Fields within this tab",
+          "items": {
+            "$ref": "#/definitions/field"
+          }
+        }
+      }
+    },
+    "taxonomy": {
+      "type": "object",
+      "required": [
+        "id"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Taxonomy identifier (max 32 characters, lowercase letters, numbers, underscores and dashes). If the taxonomy already exists, only the fields are added.",
+          "pattern": "^[a-z0-9_-]{1,32}$"
+        },
+        "args": {
+          "type": "object",
+          "description": "WordPress register_taxonomy() arguments",
+          "additionalProperties": true
+        },
+        "object_type": {
+          "description": "Post type(s) the taxonomy is attached to (default: post)",
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          ]
+        },
+        "fields": {
+          "type": "array",
+          "description": "Array of field definitions for the term screens",
+          "items": {
+            "$ref": "#/definitions/field"
+          }
+        }
+      }
+    }
+  }
+}

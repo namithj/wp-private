@@ -254,8 +254,12 @@ class Settings_Page {
 				<h2><?php esc_html_e( 'How to protect content', 'wp-private' ); ?></h2>
 				<ul>
 					<li>
+						<strong><?php esc_html_e( 'Protected content block', 'wp-private' ); ?></strong>
+						<p class="description"><?php esc_html_e( 'In the block editor, add the Protected content block and put any blocks inside it. Type /protected on an empty line to find it.', 'wp-private' ); ?></p>
+					</li>
+					<li>
 						<code class="wp-private-snippet">[protected]<?php esc_html_e( 'Members-only content', 'wp-private' ); ?>[/protected]</code>
-						<p class="description"><?php esc_html_e( 'Put this around anything in a post or page that only logged-in users should see.', 'wp-private' ); ?></p>
+						<p class="description"><?php esc_html_e( 'Or put this around anything in a post, page or classic-editor text that only logged-in users should see.', 'wp-private' ); ?></p>
 					</li>
 					<li>
 						<code class="wp-private-snippet">[loginform]</code>

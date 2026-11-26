@@ -27,6 +27,7 @@ class Plugin {
 		// Before any gate can render: priority 1 on plugins_loaded (updates do not fire the activation hook).
 		add_action( 'plugins_loaded', [ Upgrade::class, 'maybe_upgrade' ], 1 );
 		Shortcodes::register();
+		Block::register();
 		Admin\Settings_Page::init();
 	}
 }

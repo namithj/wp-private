@@ -9,6 +9,7 @@
  *
  * - WPP_PLUGIN_FILE: the main plugin file to load. Default: this build's wp-private.php.
  *   The upgrade-path group sets it to tests/fixtures/legacy/1.6.1/wp-private.php for the "old" phases.
+ * - WPP_NO_DEV_AUTOLOAD=1: do not load this build's Composer autoloader (the S14 "previous release" phase, see bin/test-upgrade-path.sh).
  * - WPP_LOAD_COEXIST_PLUGIN=1: also load the test-only fixture plugin tests/fixtures/coexist-plugin (config 10, coexistence).
  *
  * @package WpPrivate
@@ -31,7 +32,14 @@ if ( false === $wpp_test_real_abspath || 0 === strpos( $wpp_test_plugin_dir . '/
 	exit( 1 );
 }
 
-require_once dirname( __DIR__, 2 ) . '/vendor/autoload.php';
+if ( '1' === getenv( 'WPP_NO_DEV_AUTOLOAD' ) ) {
+	// The previous-release phase (S14) loads a released 2.x build, which brings its own Composer autoloader and the same
+	// class names as this build: neither this build's autoloader nor PHPUnit's from the main vendor/ may be loaded.
+	// PHPUnit comes from .cache/phpunit-tools; only the polyfills are taken from here.
+	require_once dirname( __DIR__, 2 ) . '/vendor/yoast/phpunit-polyfills/phpunitpolyfills-autoload.php';
+} else {
+	require_once dirname( __DIR__, 2 ) . '/vendor/autoload.php';
+}
 
 if ( false === getenv( 'WP_PHPUNIT__TESTS_CONFIG' ) ) {
 	// phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.runtime_configuration_putenv -- Required by wp-phpunit.

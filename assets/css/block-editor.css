@@ -1,0 +1,11 @@
+/* Editor only: the labelled frame around the Protected content block's inner blocks. Never loaded on the front end. */
+.wp-private-protected-frame {
+	border: 1px dashed currentColor;
+	padding: 8px 12px;
+}
+
+.wp-private-protected-frame__label {
+	margin: 0 0 8px;
+	font-size: 13px;
+	opacity: 0.75;
+}

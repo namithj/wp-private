@@ -1,0 +1,16 @@
+=== permitted viewer ===
+identical to the ungated post: yes
+<p>Open intro.</p>
+<p>Secret quillfeather13 WPPMARK-13-A</p>
+<div class="wp-block-group is-layout-flow wp-block-group-is-layout-flow">
+<p>Nested WPPMARK-13-B</p>
+</div>
+
+
+
+Shortcode WPPMARK-13-C
+
+
+
+<p>Open outro.</p>
+

@@ -615,6 +615,8 @@ class WPP_Scenarios {
 			if ( array_key_exists( 'authorized_text', $options['wp_private_settings'] ) ) {
 				return (string) $options['wp_private_settings']['authorized_text'];
 			}
+		} elseif ( isset( $options['wp_private_settings_authorized_text'] ) ) {
+			return (string) $options['wp_private_settings_authorized_text'];
 		} elseif ( isset( $options['wp_private_not_authorized_text'] ) ) {
 			return (string) $options['wp_private_not_authorized_text'];
 		}

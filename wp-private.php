@@ -2,8 +2,8 @@
 /**
  * Plugin Name: WP Private – Gated Content for Posts & Pages
  * Plugin URI: https://www.smartlogix.co.in/
- * Description: Privatize parts of posts from unauthorized users. Begin protected content with [protected] and end hidden content with [/protected].
- * Version: 2.0.0
+ * Description: Privatize parts of posts from unauthorized users. Use the Protected content block, or begin hidden content with [protected] and end it with [/protected].
+ * Version: 2.1.0
  * Requires at least: 6.8
  * Requires PHP: 7.4
  * Author: namithjawahar
@@ -41,7 +41,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Plugin version. Also the value stored in the wp_private_version option once the upgrade routine has run.
  */
-define( 'WP_PRIVATE_VERSION', '2.0.0' );
+define( 'WP_PRIVATE_VERSION', '2.1.0' );
 
 /**
  * Main plugin file, for plugin_dir_path() / plugin_dir_url() and the activation hook.

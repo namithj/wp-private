@@ -105,6 +105,38 @@ if [[ $# -eq 0 || "01" == "$1"* ]]; then
 	fi
 fi
 
+# S14 (from R02): the previous 2.x release over each config, then this build. Identical snapshots, no listed change.
+# The previous release brings its own Composer autoloader, so it runs under PHPUnit from .cache/phpunit-tools and
+# without this build's autoloader (WPP_NO_DEV_AUTOLOAD=1).
+PREV_VERSION="${WPP_PREV_VERSION:-2.0.0}"
+PREV_FILE="${PWD}/tests/fixtures/legacy/${PREV_VERSION}/wp-private.php"
+if [[ -f "${PREV_FILE}" && ( $# -eq 0 || "${WPP_S14:-0}" == "1" ) ]]; then
+	if [[ ! -x .cache/phpunit-tools/vendor/bin/phpunit ]]; then
+		mkdir -p .cache/phpunit-tools
+		printf '%s\n' '{"require":{"phpunit/phpunit":"^9.6"},"config":{"platform":{"php":"8.2.0"}}}' > .cache/phpunit-tools/composer.json
+		(cd .cache/phpunit-tools && composer install -q --no-interaction) || { echo "Could not install PHPUnit for S14." >&2; exit 1; }
+	fi
+	export WPP_PREV_VERSION="${PREV_VERSION}"
+	prev_slugs=("${slugs[@]}")
+	prev_slugs+=("01-fresh-default")
+	for slug in "${prev_slugs[@]}"; do
+		unset WP_TESTS_SKIP_INSTALL
+		export WPP_CAPTURE=1
+		out="$(WPP_NO_DEV_AUTOLOAD=1 WPP_PHASE=prevold WPP_PLUGIN_FILE="${PREV_FILE}" "${PHP}" .cache/phpunit-tools/vendor/phpunit/phpunit/phpunit --bootstrap tests/phpunit/bootstrap-user-configs.php --group upgrade-path --colors=never --filter "/::test_phase with data set \"${slug}\"\$/" 2>&1)"
+		status=$?
+		export WP_TESTS_SKIP_INSTALL=1
+		if [[ ${status} -ne 0 ]] || grep -Eq 'No tests executed|Skipped: [0-9]|Risky: [0-9]|Warnings: [0-9]|incomplete, skipped, or risky' <<<"${out}"; then
+			echo "${slug} S14 old (${PREV_VERSION}) ... FAIL"
+			sed 's/^/    /' <<<"${out}" | head -"${WPP_FAIL_LINES:-60}"
+			failed=$((failed + 1))
+			continue
+		fi
+		echo "${slug} S14 old (${PREV_VERSION}) ... PASS"
+		passed=$((passed + 1))
+		run_phase "${slug} S14 new (this build over ${PREV_VERSION} data)" prevnew "${slug}" ""
+	done
+fi
+
 echo
 echo "${passed} passed, ${failed} failed in $((SECONDS - start))s."
 [[ ${failed} -eq 0 ]]

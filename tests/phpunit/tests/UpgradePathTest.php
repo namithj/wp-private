@@ -11,6 +11,8 @@
  *   down     the 1.6.1 files are put back over this build's data (unsupported path, C-4.1c)
  *   first2x  a site first installed on 2.x (this build, no 1.x data)
  *   down2x   1.6.1 files over that site: gated content hidden from everyone
+ *   prevold  S14: the previous 2.x release (tests/fixtures/legacy/<version>) is active, the config is written and upgraded by it
+ *   prevnew  S14: this build over that data: identical to the frozen snapshots and to what the previous release rendered
  *
  * @package WpPrivate
  */
@@ -108,7 +110,7 @@ class UpgradePathTest extends WP_UnitTestCase {
 		if ( ! method_exists( $this, $method ) ) {
 			$this->fail( 'Unknown WPP_PHASE ' . $phase );
 		}
-		if ( in_array( $phase, [ 'first2x', 'down2x' ], true ) !== ( '01-fresh-default' === $slug ) ) {
+		if ( ! in_array( $phase, [ 'prevold', 'prevnew' ], true ) && in_array( $phase, [ 'first2x', 'down2x' ], true ) !== ( '01-fresh-default' === $slug ) ) {
 			$this->markTestSkipped( 'Phase ' . $phase . ' does not apply to ' . $slug . '.' );
 		}
 		unset( $legacy );
@@ -190,6 +192,69 @@ class UpgradePathTest extends WP_UnitTestCase {
 		if ( null !== $message ) {
 			$failures[] = 'Difference to ' . $config['version'] . ' is not the reviewed list: ' . $message;
 		}
+		$this->assertSame( [], $failures, implode( "\n\n", $failures ) );
+	}
+
+	/**
+	 * S14, previous release active: it upgrades the config's data itself (its first request) and its outputs are captured.
+	 *
+	 * @param array $config Config.
+	 * @return void
+	 */
+	private function phase_prevold( array $config ) {
+		$this->assertTrue( defined( 'WP_PRIVATE_VERSION' ), 'The previous release is loaded.' );
+		$this->assertSame( getenv( 'WPP_PREV_VERSION' ), WP_PRIVATE_VERSION, 'The previous release, not this build, is loaded.' );
+		WPP_User_Config_Loader::apply( $config, true, true );
+		$engine = new WPP_Scenarios( $this, $config, false );
+		$dir    = $this->out_dir( $config['slug'] );
+		if ( ! is_dir( $dir ) ) {
+			mkdir( $dir, 0777, true ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_mkdir
+		}
+		foreach ( $engine->capture_for_diff() as $scenario => $text ) {
+			file_put_contents( $dir . '/' . $scenario . '.txt', WPP_Normaliser::text( $text ) ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_file_put_contents
+		}
+		$this->assertTrue( true );
+	}
+
+	/**
+	 * S14, this build over the previous release's data: no listed change is allowed, everything is identical.
+	 *
+	 * @param array $config Config.
+	 * @return void
+	 */
+	private function phase_prevnew( array $config ) {
+		$this->assertTrue( defined( 'WP_PRIVATE_VERSION' ), 'This build is loaded.' );
+		$this->assertNotSame( getenv( 'WPP_PREV_VERSION' ), WP_PRIVATE_VERSION, 'This build, not the previous release, is loaded.' );
+		WPP_User_Config_Loader::install_environment();
+		WPP_User_Config_Loader::restore_posts( $config );
+		$this->assertSame( WP_PRIVATE_VERSION, get_option( 'wp_private_version' ), 'The first request on the new files ran the upgrade routine.' );
+
+		$engine = new WPP_Scenarios( $this, $config, true );
+		$engine->run_requests();
+		$failures = $engine->failures();
+
+		$store = new WPP_Snapshot_Store( dirname( __DIR__, 2 ) . '/user-configs/snapshots' );
+		foreach ( $engine->snaps() as $scenario => $text ) {
+			$message = $store->check( $config['slug'] . '/' . $scenario . '.txt', WPP_Normaliser::text( $text ) );
+			if ( null !== $message ) {
+				$failures[] = 'After the upgrade: ' . $message;
+			}
+		}
+
+		$compared = 0;
+		foreach ( [ 'S1', 'S2', 'S3', 'S4', 'S5', 'S6', 'S7', 'S8' ] as $scenario ) {
+			$old_file = $this->out_dir( $config['slug'] ) . '/' . $scenario . '.txt';
+			if ( ! is_file( $old_file ) || ! isset( $engine->snaps()[ $scenario ] ) ) {
+				continue;
+			}
+			++$compared;
+			$old = file_get_contents( $old_file ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
+			$new = WPP_Normaliser::text( $engine->snaps()[ $scenario ] );
+			if ( $old !== $new ) {
+				$failures[] = $scenario . ' differs from ' . getenv( 'WPP_PREV_VERSION' ) . ":\n" . WPP_Snapshot_Store::diff( $old, $new, 0 );
+			}
+		}
+		$this->assertGreaterThan( 0, $compared, 'The previous release left outputs to compare.' );
 		$this->assertSame( [], $failures, implode( "\n\n", $failures ) );
 	}
 

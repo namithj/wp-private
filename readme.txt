@@ -1,24 +1,25 @@
 === WP Private – Gated Content for Posts & Pages ===
 Contributors: namithjawahar
-Tags: content restriction, members only, login, shortcode, private content
+Tags: content restriction, members only, login, block, private content
 Requires at least: 6.8
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 2.0.0
+Stable tag: 2.1.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Hide part of a post or page from logged-out visitors and show a login form or login link in its place. One shortcode, no setup.
+Hide part of a post or page from logged-out visitors and show a login form or login link in its place. A Protected content block or one shortcode, no setup.
 
 == Description ==
 
 Sometimes most of a post is for everyone and one part is for people with an account: the meeting minutes, the download link, the second half of the article.
 
-Wrap that part in `[protected]` and `[/protected]`. Logged-out visitors see a login form, or a login link, exactly where the hidden part would be. After logging in they are returned to the same post and see everything.
+In the block editor, add the **Protected content** block and put any blocks inside it: paragraphs, images, lists, buttons. In the classic editor, or anywhere else, wrap the part in `[protected]` and `[/protected]`. Logged-out visitors see a login form, or a login link, exactly where the hidden part would be. After logging in they are returned to the same post and see everything.
 
 **What it does**
 
-* Hides any part of a post or page from logged-out visitors. Use it as many times as you like on one page.
+* Hides any part of a post or page from logged-out visitors, with a Protected content block or the `[protected]` shortcode. Use it as many times as you like on one page.
+* The block and the shortcode give visitors the same prompt and follow the same settings.
 * Shows a login form, a login and register link, or nothing in place of the hidden part.
 * Lets you write the text shown around the login prompt.
 * Lets you exclude individual users even when they are logged in.
@@ -38,23 +39,25 @@ WP Private gates part of a post. It is not a membership suite with levels and bi
 * Site search: **No.** A search for a word that appears only in the hidden part still returns the post, without showing the hidden text. A fix is planned for a later release.
 * Other plugins that read raw post content, such as some SEO, search or AI tools: **Not controlled by this plugin.** Check each one.
 * Users who can edit the post: They always see the full content in the editor.
-* If the plugin is deactivated or deleted: The shortcode stops working and the hidden text becomes visible together with the shortcode tags.
+* If the plugin is deactivated or deleted: The block and the shortcode stop working and the hidden text becomes visible (with the shortcode tags, for shortcodes).
 
 **Privacy**
 
-WP Private stores its settings and a list of excluded user IDs in your site's database. It sets no cookies of its own, loads no scripts or styles on your pages, and contacts no external server. If you delete the plugin, these settings stay in the database (see the FAQ for the list).
+WP Private stores its settings and a list of excluded user IDs in your site's database. It sets no cookies of its own, loads no scripts, loads one small stylesheet only on pages that show the login prompt, and contacts no external server. If you delete the plugin, these settings stay in the database (see the FAQ for the list).
 
 == Installation ==
 
 1. Upload the plugin folder to `/wp-content/plugins/`, or install it from the Plugins screen, and activate it.
-2. Edit a post or page and put `[protected]` before the part to hide and `[/protected]` after it, in a Shortcode block or in paragraph text.
+2. Edit a post or page in the block editor, add the **Protected content** block and put the blocks to hide inside it. Or put `[protected]` before the part to hide and `[/protected]` after it, in a Shortcode block, in the classic editor or in paragraph text.
 3. View the post logged out. The login form appears where the hidden part was. Settings are optional: open Settings > WP Private to change the prompt.
 
 == Frequently Asked Questions ==
 
 = How do I hide part of a post? =
 
-Put the part between the two tags:
+In the block editor, add the **Protected content** block (type `/protected` on an empty line, or find it in the inserter under Text) and put the blocks to hide inside it. Inside the editor a dashed frame labelled "Visible to logged-in users" shows what is hidden.
+
+Anywhere else, put the part between the two shortcode tags:
 
 `
 Everyone can read this.
@@ -84,7 +87,7 @@ Yes. Add the user to the block list in Settings > WP Private. Blocked users see 
 
 = Does it work with the block editor? =
 
-Yes: put the shortcode in a Shortcode block or in paragraph text. A dedicated block is planned.
+Yes. Use the **Protected content** block, in the post editor and in the Site Editor, or put the shortcode in a Shortcode block. Both are checked by the same tests.
 
 = Is the hidden text really hidden? =
 
@@ -108,7 +111,7 @@ Going back to 1.6.1 is not supported. If you do it, `[protected]` still hides co
 
 = What happens to my content if I remove the plugin? =
 
-The shortcode stops working and the hidden text becomes visible, together with the shortcode tags. Remove the tags and review the content before you delete the plugin.
+The block and the shortcode stop working and the hidden text becomes visible (with the shortcode tags, for shortcodes). Review the content before you delete the plugin.
 
 = What does the plugin leave behind if I delete it? =
 
@@ -132,6 +135,10 @@ Settings that accept HTML are filtered with the same rules as post content for u
 
 It is a known limit. WordPress searches the stored text of a post, including the hidden part. A search for a word that appears only in the hidden part returns the post, and shows its title and the visible text, never the hidden part. A fix is planned for a later release.
 
+= What happens to a Protected content block if I deactivate the plugin or go back to an older version? =
+
+The block is no longer known, so WordPress shows the blocks inside it as ordinary content, to everyone. This is the same as deactivating the plugin with `[protected]` shortcodes, which show their text. Keep the plugin active, or remove the hidden content before you deactivate it.
+
 = How do I report a security problem? =
 
 Please do not post it in the support forum. Email security@smartlogix.co.in. A policy is in SECURITY.md in the plugin's repository.
@@ -139,18 +146,24 @@ Please do not post it in the support forum. Email security@smartlogix.co.in. A p
 == Screenshots ==
 
 1. A post on a default block theme, logged out: the teaser, then the login form in place of the hidden part.
-2. The same post, logged in: the full text.
-3. The block editor: `[protected]` and `[/protected]` in Shortcode blocks around the paragraphs to hide.
+2. The block editor: the Protected content block around the paragraphs to hide, with the label "Visible to logged-in users".
+3. The same post, logged in: the full text.
 4. The settings page (Settings → WP Private).
 5. The login and register links variant, logged out.
 6. The block list (Settings → WP Private, Blocked users tab): blocked users stay ticked at the top; search to add more.
 
 == Changelog ==
 
+= 2.1.0 =
+New: a Protected content block for the block editor. Same prompt as the [protected] shortcode; shortcodes are unchanged.
+
 = 2.0.0 =
 A maintenance release after a long gap. The login form now appears inside the post where the hidden part is. Protected content works immediately after activation. Login links return you to the post. Settings are sanitised. Requires WordPress 6.8 and PHP 7.4. Your `[protected]` shortcodes are unchanged and your settings are moved to a new format automatically; going back to 1.6.1 afterwards is not supported.
 
 == Upgrade Notice ==
+
+= 2.1.0 =
+Adds a Protected content block. If you later go back to 2.0.0 or 1.6.1 the block is unknown and its contents show to everyone, as when the plugin is deactivated.
 
 = 2.0.0 =
 A maintenance release after a long gap. Your [protected] shortcodes are unchanged and settings convert automatically; going back to 1.6.1 is not supported. The login form now sits inside the post. Needs WordPress 6.8 and PHP 7.4; older sites stay on 1.6.1.
