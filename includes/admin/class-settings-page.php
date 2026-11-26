@@ -267,11 +267,28 @@ class Settings_Page {
 			<form method="post" action="options.php">
 				<?php
 				settings_fields( self::MENU_SLUG );
-				do_settings_sections( self::MENU_SLUG );
+				self::render_sections();
 				submit_button();
 				?>
 			</form>
 		</div>
 		<?php
+	}
+
+	/**
+	 * Print the settings sections with no global post.
+	 *
+	 * cassette-cmf's tabs field takes a set global $post as a post-edit context: its fields would then read post meta
+	 * and lose the wp_private_settings_ prefix in their names, so a save would empty every option. A plugin that
+	 * leaves $post set on this screen must not cause that (WP-CMF-6).
+	 *
+	 * @return void
+	 */
+	private static function render_sections() {
+		global $post;
+		$saved = $post;
+		$post  = null; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited -- Restored right below.
+		do_settings_sections( self::MENU_SLUG );
+		$post = $saved; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited -- Restores the caller's value.
 	}
 }

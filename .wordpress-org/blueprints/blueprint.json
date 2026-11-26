@@ -1,0 +1,43 @@
+{
+  "$schema": "https://playground.wordpress.net/blueprint-schema.json",
+  "meta": {
+    "title": "WP Private demo",
+    "author": "namithj",
+    "description": "A post with a members-only part, viewed logged out: the login form appears where the hidden text was.",
+    "categories": [
+      "Content"
+    ]
+  },
+  "landingPage": "/?p=100",
+  "preferredVersions": {
+    "php": "8.3",
+    "wp": "latest"
+  },
+  "steps": [
+    {
+      "step": "installPlugin",
+      "pluginData": {
+        "resource": "wordpress.org/plugins",
+        "slug": "wp-private"
+      },
+      "options": {
+        "activate": true
+      }
+    },
+    {
+      "step": "activateTheme",
+      "themeFolderName": "twentytwentyfive"
+    },
+    {
+      "step": "setSiteOptions",
+      "options": {
+        "blogname": "WP Private demo",
+        "blogdescription": "Members-only content with one shortcode"
+      }
+    },
+    {
+      "step": "runPHP",
+      "code": "<?php\nrequire '/wordpress/wp-load.php';\nwp_set_current_user( 1 );\nkses_remove_filters();\nwp_insert_post(\n\tarray(\n\t\t'import_id'    => 100,\n\t\t'post_type'    => 'post',\n\t\t'post_status'  => 'publish',\n\t\t'post_title'   => \"Members' newsletter: November\",\n\t\t'post_content' => wp_slash( \"<!-- wp:paragraph -->\\n<p>Our November issue is out. The first part is free for everyone; the rest is for members.</p>\\n<!-- /wp:paragraph -->\\n\\n<!-- wp:paragraph -->\\n<p><em>Demo: log in as <strong>admin</strong> with the password <strong>password</strong> to see the whole post.</em></p>\\n<!-- /wp:paragraph -->\\n\\n<!-- wp:shortcode -->[protected]<!-- /wp:shortcode -->\\n\\n<!-- wp:paragraph -->\\n<p>Members get the full interview with our editor, including the three tools she uses every day to plan the month.</p>\\n<!-- /wp:paragraph -->\\n\\n<!-- wp:paragraph -->\\n<p>Also for members: the reading list for December and an early look at next month's workshop dates.</p>\\n<!-- /wp:paragraph -->\\n\\n<!-- wp:shortcode -->[/protected]<!-- /wp:shortcode -->\\n\\n<!-- wp:paragraph -->\\n<p>Thanks for reading.</p>\\n<!-- /wp:paragraph -->\" ),\n\t)\n);\nwp_set_current_user( 0 );\n"
+    }
+  ]
+}

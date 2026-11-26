@@ -328,6 +328,45 @@ class SettingsPageTest extends WPP_Test_Case {
 	}
 
 	/**
+	 * A long block list is paged and posts a handful of variables, so max_input_vars cannot cut it; a save loses nobody.
+	 *
+	 * @return void
+	 */
+	public function test_long_block_list_posts_few_variables_and_survives_a_save() {
+		$ids = [];
+		for ( $i = 1; $i <= 120; $i++ ) {
+			$ids[] = self::factory()->user->create( [ 'user_login' => sprintf( 'wppblock%03d', $i ) ] );
+		}
+		$blocked = array_merge( $ids, [ 987654 ] );
+		update_option( Settings::OPTION_BLOCKED_USERS, $blocked );
+		$_GET                 = [];
+		list( $blocked_html ) = $this->sections( $this->page_html() );
+		$this->assertSame( 50, preg_match_all( '/type="checkbox" name="wp_private_settings_blocked_users\[\]"/', $blocked_html ), 'One page of blocked users.' );
+		$this->assertSame( 1, preg_match_all( '/type="hidden" name="wp_private_settings_blocked_users\[\]"/', $blocked_html ), 'The other IDs ride in one input.' );
+		$this->assertStringContainsString( Users_Field::BLOCKED_PAGE_ARG . '=2', $blocked_html, 'Paging links.' );
+		$this->assertStringContainsString( '121 users are on the block list.', $blocked_html );
+
+		// The browser posts the ticked boxes and the hidden input; nothing is lost, and unticking one removes it.
+		preg_match_all( '/name="wp_private_settings_blocked_users\[\]" value="([\d,]+)"( checked=\'checked\')?/', $blocked_html, $m, PREG_SET_ORDER );
+		$posted = [];
+		foreach ( $m as $row ) {
+			$posted[] = $row[1];
+		}
+		update_option( Settings::OPTION_BLOCKED_USERS, $posted );
+		$this->assertEqualsCanonicalizing( $blocked, get_option( Settings::OPTION_BLOCKED_USERS ), 'No stored ID is dropped.' );
+		$untick = $posted;
+		unset( $untick[0] );
+		update_option( Settings::OPTION_BLOCKED_USERS, $untick );
+		$this->assertCount( 120, get_option( Settings::OPTION_BLOCKED_USERS ), 'Unticking removes exactly one user.' );
+
+		// 120 IDs remain (119 real users): page 3 holds the last 19 users; a page past the end falls back to it.
+		$_GET                 = [ Users_Field::BLOCKED_PAGE_ARG => 99 ];
+		list( $blocked_html ) = $this->sections( $this->page_html() );
+		$this->assertSame( 19, preg_match_all( '/type="checkbox" name="wp_private_settings_blocked_users\[\]"/', $blocked_html ) );
+		$_GET = [];
+	}
+
+	/**
 	 * Two tabs, the quick-start card and the conditional rules.
 	 *
 	 * @return void
@@ -412,5 +451,28 @@ class SettingsPageTest extends WPP_Test_Case {
 		}
 		$this->assertGreaterThan( 8, $tested );
 		$this->assertSame( [], $found, '1.x option names outside class-upgrade.php.' );
+	}
+
+	/**
+	 * A global $post left set on the screen (another plugin, an earlier render) changes neither the field names nor
+	 * the values shown, so a save cannot empty the options (S10); the caller's $post is restored afterwards.
+	 *
+	 * @return void
+	 */
+	public function test_global_post_does_not_change_the_form() {
+		update_option( Settings::OPTION_TYPE, 'link' );
+		update_option( Settings::OPTION_BEFORE_HTML, '<p class="kept">Kept</p>' );
+		$other           = get_post( self::factory()->post->create() );
+		$GLOBALS['post'] = $other; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited -- The state under test.
+
+		$html = $this->page_html();
+
+		$this->assertSame( $other, $GLOBALS['post'], 'The global post is restored.' );
+		$this->assertStringContainsString( 'name="' . Settings::OPTION_TYPE . '" value="link" checked', $html );
+		$this->assertStringContainsString( '&lt;p class=&quot;kept&quot;&gt;Kept&lt;/p&gt;</textarea>', $html );
+		foreach ( [ 'type', 'before_html', 'after_html', 'authorized_text', 'custom_login_page_url', 'blocked_users[]' ] as $field ) {
+			$this->assertStringNotContainsString( 'name="' . $field . '"', $html, 'Unprefixed field name: ' . $field );
+		}
+		unset( $GLOBALS['post'] );
 	}
 }

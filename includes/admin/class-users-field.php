@@ -17,9 +17,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Class Users_Field
  *
- * A user picker (fallback for WP-CMF-2): every blocked user as a ticked checkbox, then a searchable list (pages of 50)
- * of the users not yet blocked. IDs on the block list that no longer match a user are posted back as hidden inputs,
- * so that saving never drops a stored ID (A-09). The stored value is an array of integers.
+ * A user picker (fallback for WP-CMF-2): the blocked users as ticked checkboxes (pages of 50), then a searchable list
+ * (pages of 50) of the users not yet blocked. Blocked IDs not shown on the current page (other pages, IDs that no longer
+ * match a user) are posted back as one hidden comma-separated input, so that saving never drops a stored ID (A-09) and
+ * the form posts at most about 100 variables however long the list is (PHP's max_input_vars cuts the rest silently).
+ * The stored value is an array of integers.
  */
 class Users_Field extends Abstract_Field {
 
@@ -37,6 +39,11 @@ class Users_Field extends Abstract_Field {
 	 * Query argument of the page number.
 	 */
 	const PAGE_ARG = 'wp_private_users_page';
+
+	/**
+	 * Query argument of the block-list page number.
+	 */
+	const BLOCKED_PAGE_ARG = 'wp_private_blocked_page';
 
 	/**
 	 * Query argument of the search term.
@@ -71,12 +78,16 @@ class Users_Field extends Abstract_Field {
 
 		$list_url = admin_url( 'options-general.php?page=' . Settings_Page::MENU_SLUG );
 
-		// Section A: every blocked user, ticked; unticking removes the user. IDs of no user stay as hidden inputs.
+		// Section A: one page of the blocked users, ticked; unticking removes the user. The other IDs ride in one hidden input.
+		$sorted = $blocked;
+		sort( $sorted );
+		$blocked_pages = max( 1, (int) ceil( count( $sorted ) / self::PER_PAGE ) );
+		$blocked_paged = isset( $_GET[ self::BLOCKED_PAGE_ARG ] ) ? min( $blocked_pages, max( 1, absint( wp_unslash( $_GET[ self::BLOCKED_PAGE_ARG ] ) ) ) ) : 1; // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only view state.
 		$blocked_users = [];
-		if ( ! empty( $blocked ) ) {
+		if ( ! empty( $sorted ) ) {
 			$blocked_users = get_users(
 				[
-					'include' => $blocked,
+					'include' => array_slice( $sorted, ( $blocked_paged - 1 ) * self::PER_PAGE, self::PER_PAGE ),
 					'orderby' => 'login',
 					'order'   => 'ASC',
 					'fields'  => [ 'ID', 'user_login', 'display_name' ],
@@ -103,8 +114,25 @@ class Users_Field extends Abstract_Field {
 			foreach ( $blocked_users as $user ) {
 				$known[] = (int) $user->ID;
 			}
-			foreach ( array_diff( $blocked, $known ) as $id ) {
-				$output .= '<input type="hidden" name="' . esc_attr( $this->name ) . '[]" value="' . esc_attr( (string) $id ) . '" />';
+			$rest = array_values( array_diff( $blocked, $known ) );
+			if ( ! empty( $rest ) ) {
+				$output .= '<input type="hidden" name="' . esc_attr( $this->name ) . '[]" value="' . esc_attr( implode( ',', $rest ) ) . '" />';
+			}
+			if ( $blocked_pages > 1 ) {
+				$blocked_base = add_query_arg( self::SEARCH_ARG, rawurlencode( $search ), add_query_arg( self::PAGE_ARG, $paged, $list_url ) );
+				$output      .= '<div class="tablenav"><div class="tablenav-pages">' . wp_kses_post(
+					(string) paginate_links(
+						[
+							'base'      => add_query_arg( self::BLOCKED_PAGE_ARG, '%#%', $blocked_base ),
+							'format'    => '',
+							'current'   => $blocked_paged,
+							'total'     => $blocked_pages,
+							'prev_text' => '&lsaquo;',
+							'next_text' => '&rsaquo;',
+						]
+					)
+				) . '</div></div>';
+				$output      .= '<p class="description">' . esc_html__( 'Save before moving to another page, or the ticks on this page are lost.', 'wp-private' ) . '</p>';
 			}
 		}
 		$output .= '</div>';
@@ -155,7 +183,7 @@ class Users_Field extends Abstract_Field {
 		}
 
 		if ( $pages > 1 ) {
-			$base    = add_query_arg( self::SEARCH_ARG, rawurlencode( $search ), $list_url );
+			$base    = add_query_arg( self::SEARCH_ARG, rawurlencode( $search ), add_query_arg( self::BLOCKED_PAGE_ARG, $blocked_paged, $list_url ) );
 			$output .= '<div class="tablenav"><div class="tablenav-pages">' . wp_kses_post(
 				(string) paginate_links(
 					[
@@ -218,6 +246,17 @@ class Users_Field extends Abstract_Field {
 	 * @return array<int|string>
 	 */
 	public function sanitize( $input ) {
+		if ( is_array( $input ) ) {
+			$flat = [];
+			foreach ( $input as $item ) {
+				if ( is_string( $item ) && false !== strpos( $item, ',' ) ) {
+					$flat = array_merge( $flat, explode( ',', $item ) );
+				} else {
+					$flat[] = $item;
+				}
+			}
+			$input = $flat;
+		}
 		$ids    = Settings::normalise_ids( $input );
 		$stored = get_option( Settings::OPTION_BLOCKED_USERS, Settings::MISSING );
 

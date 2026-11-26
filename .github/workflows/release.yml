@@ -73,6 +73,13 @@ jobs:
           ( cd "$( dirname "${ZIP}" )" && sha256sum "$( basename "${ZIP}" )" | tee "$( basename "${ZIP}" ).sha256" )
           echo "ZIP_PATH=${ZIP}" >> "${GITHUB_ENV}"
 
+      - name: Build Playground bundle
+        shell: bash
+        run: |
+          BUNDLE_PATH="${ZIP_PATH%.zip}-playground.zip"
+          bash bin/build-playground-bundle.sh "${ZIP_PATH}" "${BUNDLE_PATH}"
+          echo "BUNDLE_PATH=${BUNDLE_PATH}" >> "${GITHUB_ENV}"
+
       - name: Create or update GitHub release
         uses: softprops/action-gh-release@8a0cd651e5b2365bd640854a3fa5dfc70e4875f3 # v3.0.4
         with:
@@ -80,4 +87,71 @@ jobs:
           files: |
             ${{ env.ZIP_PATH }}
             ${{ env.ZIP_PATH }}.sha256
+            ${{ env.BUNDLE_PATH }}
           generate_release_notes: true
+
+      # The demo installs the ZIP attached to this very release.
+      - name: Generate release Playground URL
+        shell: bash
+        run: |
+          PLAYGROUND_URL="$(node -e '
+            const blueprint = JSON.parse( require( "fs" ).readFileSync( ".wordpress-org/blueprints/blueprint.json", "utf8" ) );
+            const [ repository, tag, zipName ] = process.argv.slice( 1 );
+            for ( const step of blueprint.steps ) {
+              if ( step.step === "installPlugin" ) {
+                step.pluginData = { resource: "url", url: "https://github.com/" + repository + "/releases/download/" + tag + "/" + zipName };
+              }
+            }
+            process.stdout.write( "https://playground.wordpress.net/#" + Buffer.from( JSON.stringify( blueprint ) ).toString( "base64" ) );
+          ' "${GITHUB_REPOSITORY}" "${TAG}" "$( basename "${ZIP_PATH}" )")"
+          echo "PLAYGROUND_URL=${PLAYGROUND_URL}" >> "${GITHUB_ENV}"
+
+      - name: Add Playground link to release description
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const startMarker = '<!-- wp-private-playground:start -->';
+            const endMarker = '<!-- wp-private-playground:end -->';
+            const section = [
+              startMarker,
+              '## Live demo',
+              '',
+              `[Try this release in WordPress Playground](${process.env.PLAYGROUND_URL})`,
+              endMarker,
+            ].join('\n');
+            const markerPattern = new RegExp(
+              `\\n?${startMarker}[\\s\\S]*?${endMarker}\\n?`,
+              'g',
+            );
+            const { owner, repo } = context.repo;
+            const release = (
+              await github.rest.repos.getReleaseByTag({
+                owner,
+                repo,
+                tag: process.env.TAG,
+              })
+            ).data;
+            // Regenerated notes are preserved; only the marked section is replaced.
+            const preservedBody = (release.body || '').replace(markerPattern, '').trimEnd();
+            const body = preservedBody ? `${preservedBody}\n\n${section}` : section;
+
+            await github.rest.repos.updateRelease({
+              owner,
+              repo,
+              release_id: Number(release.id),
+              body,
+            });
+
+      - name: Summary
+        shell: bash
+        run: |
+          {
+            echo "### Release ${TAG}"
+            echo
+            echo "- SHA-256: \`$(cut -d' ' -f1 "${ZIP_PATH}.sha256")\`"
+            echo "- [Try it in WordPress Playground](${PLAYGROUND_URL})"
+            echo
+            echo "WordPress.org is not published automatically. To ship this"
+            echo "release there, run the **Deploy to WordPress.org** workflow by hand."
+          } >> "${GITHUB_STEP_SUMMARY}"
